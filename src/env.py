@@ -2,9 +2,12 @@
 from dotenv import load_dotenv
 import os
 
-# Load environment variables from the .env file (if present)
+# Load environment variables from the .env file
 load_dotenv()
-
-# Access environment variables as if they came from the actual environment
-SECRET_KEY = os.getenv('SECRET_KEY')
-DATABASE_URL = os.getenv('DATABASE_URL')
+DEFAULT_LANGUAGE = os.getenv('DEFAULT_LANGUAGE')
+FIRST_EN_MESSAGE = os.getenv('FIRST_EN_MESSAGE')
+OLLAMA_VISION_MODEL = os.getenv('OLLAMA_VISION_MODEL')
+OLLAMA_LANGUAGE_MODEL = os.getenv('OLLAMA_LANGUAGE_MODEL')
+WHISPER_MODEL = os.getenv('WHISPER_MODEL')
+OLLAMA_VISION_DECISION_PROMPT = os.getenv('OLLAMA_VISION_DECISION_PROMPT')
+OLLAMA_HOST = os.getenv('OLLAMA_HOST')

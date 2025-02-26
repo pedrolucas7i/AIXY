@@ -4,8 +4,6 @@ import pyttsx3
 import threading
 import time
 
-# import soundfile
-
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -16,10 +14,10 @@ def init():
     tts = pyttsx3.init("nsss")
     tts.setProperty('rate', tts.getProperty('rate') - 20)
     
-def text_to_speech(self, text):
+def text_to_speech(message):
     
-        logging.info(f"Converting text to speech: {text}")
-        print('\nAI:\n', text.strip())
+        logging.info(f"Converting message to speech: {message}")
+        print('\nTTS:\n', message.strip())
 
         def play_speech():
             try:
@@ -30,11 +28,11 @@ def text_to_speech(self, text):
                 rate = engine.getProperty('rate')
                 engine.setProperty('rate', rate - 50)  # Decrease the rate by 50 units
                 
-                # Add a short delay before converting text to speech
+                # Add a short delay before converting message to speech
                 time.sleep(0.5)  # Adjust the delay as needed
                 
-                logging.info("Converting text to speech")
-                engine.say(text)
+                logging.info("Converting message to speech")
+                engine.say(message)
                 engine.runAndWait()
                 logging.info("Speech playback completed")
             except Exception as e:
