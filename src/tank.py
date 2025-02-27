@@ -1,6 +1,7 @@
 # Import the Motor class from the gpiozero library
-from gpiozero import Motor
+from gpiozero import Motor, DistanceSensor, PWMSoftwareFallback
 from time import sleep
+import warnings
 import env
 
 # Define the tankMotor class to control the motors of a tank-like robot
@@ -51,11 +52,13 @@ class Motor:
         
     def driveForward(self, speedLevel=1):
         """Drive Forward with diferent speed levels"""
-        pwm_value = 1200
+        pwm_value = 800
         
         if speedLevel == 2:
-            pwm_value = 2640
+            pwm_value = 1200
         elif speedLevel == 3:
+            pwm_value = 2640
+        elif speedLevel == 4:
             pwm_value = 4000
         
         self.setMotorModel(pwm_value + env.LEFT_MOTOR_CORRECTION_PWM_VALUE, pwm_value + env.RIGHT_MOTOR_CORRECTION_PWM_VALUE)
@@ -96,19 +99,90 @@ class Motor:
         
     def driveBackward(self, speedLevel=1):
         """Drive Backward with diferent speed levels"""
-        pwm_value = -1200
+        pwm_value = -800
         
         if speedLevel == 2:
-            pwm_value = -2640
+            pwm_value = -1200
         elif speedLevel == 3:
-            pwm_value = -4000
+            pwm_value = -2640
         
         self.setMotorModel(pwm_value - env.LEFT_MOTOR_CORRECTION_PWM_VALUE, pwm_value - env.RIGHT_MOTOR_CORRECTION_PWM_VALUE)
+    
+    def stop(self):
+        self.setMotorModel(0, 0) 
     
     def close(self):
         """Close the motors to release resources."""
         self.left_motor.close()   # Close the left motor
         self.right_motor.close()  # Close the right motor
+        
+class Ultrasonic:
+    def __init__(self):
+        # Initialize the Ultrasonic class and set up the distance sensor.
+        warnings.filterwarnings("ignore", category=PWMSoftwareFallback)  # Ignore PWM software fallback warnings
+        self.trigger_pin = 27  # Set the trigger pin number
+        self.echo_pin = 22     # Set the echo pin number
+        self.sensor = DistanceSensor(echo=self.echo_pin, trigger=self.trigger_pin, max_distance=3)  # Initialize the distance sensor
+
+    def get_distance(self):
+        # Get the distance measurement from the ultrasonic sensor in centimeters.
+        distance_cm = self.sensor.distance * 100  # Convert distance from meters to centimeters
+        return round(float(distance_cm), 1)       # Return the distance rounded to one decimal place
+
+    def close(self):
+        # Close the distance sensor.
+        self.sensor.close()        # Close the sensor to release resources
+        
+class Clamp:
+    def __init__(self):
+        self.servo = None
+        self.clamp_mode = 0
+        if self.servo is None:
+            self.servo = Servo()
+        
+    def up(self):
+        """Perform clamp up operation"""
+        # Get distance from ultrasonic sensor
+        distance = self.sonic.get_distance()
+        motor = Motor()
+        # Control motor based on distance
+        if distance <= 5:
+            motor.driveBackward(2)
+        elif distance > 5 and distance < 7.5:
+            motor.driveBackward(1)
+        elif distance >= 7.5 and distance <= 7.7:
+            motor.stop()
+            # Adjust servos to clamp up
+            for i in range(140, 90, -1):
+                self.servo.setServoAngle('1', i)
+                sleep(0.01)
+            for i in range(90, 130, 1):
+                self.servo.setServoAngle('0', i)
+                sleep(0.01)  
+            for i in range(90, 140, 1):
+                self.servo.setServoAngle('1', i)
+                sleep(0.01)
+        elif distance > 7.7 and distance < 11:
+            motor.driveForward(1)
+        elif distance >= 11:
+            motor.driveForward(2)
+        # Sleep for a short duration
+        sleep(0.05) 
+
+    def down(self):
+        """Perform clamp down operation"""
+        motor = Motor()
+        motor.stop()
+        # Adjust servos to clamp down
+        for i in range(140, 90, -1):
+            self.servo.setServoAngle('1', i)
+            sleep(0.01)
+        for i in range(130, 90, -1):
+            self.servo.setServoAngle('0', i)
+            sleep(0.01)
+        for i in range(90, 140, 1):
+            self.servo.setServoAngle('1', i)
+            sleep(0.01)
 
 # Main program logic follows:
 if __name__ == '__main__':
