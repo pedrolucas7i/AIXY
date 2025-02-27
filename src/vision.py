@@ -22,4 +22,10 @@ def decide(waitTime):
         sleep(waitTime)
         
 # Waiting to make find method, for real object search
-
+def find(thing, waitTime):
+    for frame in camera.captured_images():
+        decision = askOllama(env.OLLAMA_LANGUAGE_MODEL, frame, env.OLLAMA_VISION_DECISION_PROMPT)
+        logging.info(f"Decided: {decision}")
+        yield decision
+        sleep(waitTime)
+        
