@@ -28,9 +28,9 @@ def makePrompt(model, toDo, thing, color=None, localization=None, MemoryFile=Tru
         logging.warning("Invalid toDo! Changing category to 'info'...")
         print("Invalid toDo! Changing category to 'info'...")
         category = 'info'
+        
+    definition = accessMemory(thing, category)
     
-    
-    definition = accessMemory(thing, category)    
     
     
     """
@@ -40,6 +40,13 @@ def makePrompt(model, toDo, thing, color=None, localization=None, MemoryFile=Tru
     thing:          computer
     color:          None
     localization:   None
+    """
+    
+    """
+    PROMPT RESPONSE(toDo: search)
+    
+    {thing:"computer", category:"info", definition:""}
+    
     """
     
     """
