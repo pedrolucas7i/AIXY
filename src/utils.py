@@ -5,6 +5,7 @@ import logging
 import json
 import llm
 import env
+import os
 
 
 # Configure logging
@@ -58,6 +59,10 @@ def addMemory(thing, definition, category):
     cursor.execute("INSERT INTO definitions (thing, definition, category) VALUES (?, ?, ?)", (thing, definition, category))
     conn.commit()
     conn.close()
+
+
+def calculatedWaitingTime(low_usage_delay):
+    sleep(os.getloadavg()[0] * low_usage_delay)
 
 
 def findObjectVisionPrompt(thing, localization=None, MemoryFile=True):

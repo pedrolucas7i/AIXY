@@ -9,16 +9,14 @@ import env
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
         
-def decide(waitTime=0.02):
+def decide():
     for frame in camera.captured_images():
         decision = llm.get(env.OLLAMA_LANGUAGE_MODEL, env.OLLAMA_VISION_DECISION_PROMPT, frame)
         logging.info(f"Decided: {decision}")
         yield decision
-        sleep(waitTime)
 
-def find(thing, localization=None, waitTime=0.02):
+def find(thing, localization=None):
     for frame in camera.captured_images():
         decision = llm.get(env.OLLAMA_LANGUAGE_MODEL, utils.findObjectVisionPrompt(thing, localization), frame)
         logging.info(f"Decided: {decision}")
         yield decision
-        sleep(waitTime)
