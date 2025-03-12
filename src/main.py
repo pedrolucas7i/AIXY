@@ -1,7 +1,6 @@
 import threading
 import logging
 import vision
-import tank
 import utils
 import env
 
@@ -9,7 +8,6 @@ import env
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def autonomous_drive(thing, localization=None):
-    
     if not thing:
         decision = vision.decide()
     else:
@@ -17,6 +15,10 @@ def autonomous_drive(thing, localization=None):
 
     utils.drive(utils.movements[decision].get('direction'), utils.movements[decision].get('speed'))
     utils.calculatedWaitingTime(0.7)
+
+
+def human_interaction():
+    
 
 
 if __name__ == "__main__":

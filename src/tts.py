@@ -1,5 +1,4 @@
 import logging
-import pyaudio
 import pyttsx3
 import threading
 import time
@@ -10,7 +9,6 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %
 
 def init():
     logging.info("Initializing TTS")
-    audio = pyaudio.PyAudio()
     tts = pyttsx3.init("nsss")
     tts.setProperty('rate', tts.getProperty('rate') - 20)
     
