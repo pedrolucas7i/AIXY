@@ -136,7 +136,6 @@ class Ultrasonic:
 class Clamp:
     def __init__(self):
         self.servo = None
-        self.clamp_mode = 0
         if self.servo is None:
             self.servo = Servo()
         

@@ -4,6 +4,7 @@ import os
 
 # Load environment variables from the .env file
 load_dotenv()
+AIXY_SOFTWARE_VERSION = os.getenv('AIXY_SOFTWARE_VERSION')
 DEFAULT_LANGUAGE = os.getenv('DEFAULT_LANGUAGE')
 FIRST_EN_MESSAGE = os.getenv('FIRST_EN_MESSAGE')
 OLLAMA_VISION_MODEL = os.getenv('OLLAMA_VISION_MODEL')

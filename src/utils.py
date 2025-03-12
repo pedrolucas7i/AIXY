@@ -2,11 +2,28 @@ from ollama import Client
 from time import sleep
 import sqlite3
 import logging
-import json
+import tank
 import llm
 import env
 import os
 
+movements = {
+    "forward": {"direction": "forward", "speed": 2},
+    "backward": {"direction": "backward", "speed": 2},
+    "slow forward": {"direction": "forward", "speed": 1},
+    "slow backward": {"direction": "backward", "speed": 1},
+    "fast forward": {"direction": "forward", "speed": 3},
+    "fast backward": {"direction": "backward", "speed": 3},
+    "faster forward": {"direction": "forward", "speed": 4},
+    "left": {"direction": "left", "speed": 2},
+    "right": {"direction": "right", "speed": 2},
+    "left fast": {"direction": "left", "speed": 3},
+    "right fast": {"direction": "right", "speed": 3},
+    "left very fast": {"direction": "left", "speed": 4},
+    "right very fast": {"direction": "right", "speed": 4},
+    "left hiper fast": {"direction": "left", "speed": 4},
+    "right hiper fast": {"direction": "right", "speed": 4},
+}
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -64,6 +81,21 @@ def addMemory(thing, definition, category):
 def calculatedWaitingTime(low_usage_delay):
     sleep(os.getloadavg()[0] * low_usage_delay)
 
+
+def drive(direction, intensity):
+    Motors = tank.Motor()
+    if 'forward' in direction:
+        Motors.driveForward(intensity)
+    elif 'backward' in direction:
+        Motors.driveBackward(intensity)
+    elif 'left' in direction:
+        Motors.driveLeft(intensity)
+    elif 'right' in direction:
+        Motors.driveRight(intensity)
+    elif 'finded' in direction:
+        Clamp = tank.Clamp()
+        Clamp.down()
+        
 
 def findObjectVisionPrompt(thing, localization=None, MemoryFile=True):
     definition = None
