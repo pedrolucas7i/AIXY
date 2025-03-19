@@ -30,3 +30,6 @@ def get(thing, color=None, localization=None):
             utils.addMemory(thing, definition, 'info')
             
     return definition
+
+def interact(receved):
+    

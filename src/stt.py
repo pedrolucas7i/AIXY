@@ -9,7 +9,7 @@ import time
 import os
 
 # Load Whisper model (Use 'tiny' for better performance on Raspberry Pi)
-model = whisper.load_model("base")
+model = whisper.load_model("medium")
 
 # Audio parameters
 SAMPLE_RATE = 16000  # Whisper requires 16kHz audio
@@ -57,16 +57,17 @@ def audio_generator():
 
 def transcribe_audio(audio_buffer):
     """Transcribes the recorded speech and returns the text."""
-    temp_wav = tempfile.NamedTemporaryFile(delete=False, suffix=".wav")
-    with wave.open(temp_wav.name, "wb") as wf:
+    fd, temp_wav = tempfile.mkstemp(suffix=".wav")
+    os.close(fd)
+    with wave.open(temp_wav, "wb") as wf:
         wf.setnchannels(CHANNELS)
         wf.setsampwidth(2)  # 16-bit PCM
         wf.setframerate(SAMPLE_RATE)
         wf.writeframes(audio_buffer.tobytes())
 
     print("Transcribing...")
-    result = model.transcribe(audio=temp_wav.name)
-    os.unlink(temp_wav.name)  # Remove temporary file after use
+    result = model.transcribe(audio=temp_wav)
+    os.unlink(temp_wav)  # Remove temporary file after use
 
     user_text = result.get("text", "").strip()
     if user_text:
@@ -75,4 +76,4 @@ def transcribe_audio(audio_buffer):
 
 if __name__ == "__main__":
     for text in audio_generator():
-        print(f"Final text: {text}")
+        print(f"Received: {text}")

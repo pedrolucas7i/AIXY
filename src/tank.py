@@ -1,5 +1,5 @@
 # Import the Motor class from the gpiozero library
-from gpiozero import Motor, DistanceSensor, PWMSoftwareFallback
+from gpiozero import Motor as Motors, DistanceSensor, PWMSoftwareFallback
 from time import sleep
 import warnings
 import env
@@ -9,8 +9,8 @@ class Motor:
     
     def __init__(self):
         """Initialize the tankMotor class with GPIO pins for the left and right motors."""
-        self.left_motor = Motor(23, 24)  # Initialize the left motor with GPIO pins 23 and 24
-        self.right_motor = Motor(6, 5)   # Initialize the right motor with GPIO pins 6 and 5
+        self.left_motor = Motors(23, 24)  # Initialize the left motor with GPIO pins 23 and 24
+        self.right_motor = Motors(6, 5)   # Initialize the right motor with GPIO pins 6 and 5
 
     def duty_range(self, duty1, duty2):
         """Ensure the duty cycle values are within the valid range (-4095 to 4095)."""
@@ -50,8 +50,8 @@ class Motor:
         self.left_Wheel(duty1)   # Control the left wheel
         self.right_Wheel(duty2)  # Control the right wheel
         
-    def driveForward(self, speedLevel=1):
-        """Drive Forward with diferent speed levels"""
+    def driveBackward(self, speedLevel=1):
+        """Drive Backward with diferent speed levels"""
         pwm_value = 800
         
         if speedLevel == 2:
@@ -61,10 +61,10 @@ class Motor:
         elif speedLevel == 4:
             pwm_value = 4000
         
-        self.setMotorModel(pwm_value + env.LEFT_MOTOR_CORRECTION_PWM_VALUE, pwm_value + env.RIGHT_MOTOR_CORRECTION_PWM_VALUE)
+        self.setMotorModel(pwm_value + int(env.LEFT_MOTOR_CORRECTION_PWM_VALUE), pwm_value + int(env.RIGHT_MOTOR_CORRECTION_PWM_VALUE))
         
-    def driveLeft(self, turnLevel=1):
-        """Drive Left with diferent turn levels"""
+    def driveRight(self, turnLevel=1):
+        """Drive Right with diferent turn levels"""
         left_pwm = 2640
         right_pwm = 4000
         
@@ -78,10 +78,10 @@ class Motor:
             left_pwm = -1200
             right_pwm = 1200
         
-        self.setMotorModel(left_pwm + env.LEFT_MOTOR_CORRECTION_PWM_VALUE, right_pwm + env.RIGHT_MOTOR_CORRECTION_PWM_VALUE)
+        self.setMotorModel(left_pwm + int(env.LEFT_MOTOR_CORRECTION_PWM_VALUE), right_pwm + int(env.RIGHT_MOTOR_CORRECTION_PWM_VALUE))
         
-    def driveRight(self, turnLevel=1):
-        """Drive Right with diferent turn levels"""
+    def driveLeft(self, turnLevel=1):
+        """Drive Left with diferent turn levels"""
         left_pwm = 4000
         right_pwm = 2640
         
@@ -95,9 +95,9 @@ class Motor:
             left_pwm = 1200
             right_pwm = -1200
         
-        self.setMotorModel(left_pwm + env.LEFT_MOTOR_CORRECTION_PWM_VALUE, right_pwm + env.RIGHT_MOTOR_CORRECTION_PWM_VALUE)
+        self.setMotorModel(left_pwm + int(env.LEFT_MOTOR_CORRECTION_PWM_VALUE), right_pwm + int(env.RIGHT_MOTOR_CORRECTION_PWM_VALUE))
         
-    def driveBackward(self, speedLevel=1):
+    def driveForward(self, speedLevel=1):
         """Drive Backward with diferent speed levels"""
         pwm_value = -800
         
@@ -105,8 +105,10 @@ class Motor:
             pwm_value = -1200
         elif speedLevel == 3:
             pwm_value = -2640
+        elif speedLevel == 4:
+            pwm_value = -4000
         
-        self.setMotorModel(pwm_value - env.LEFT_MOTOR_CORRECTION_PWM_VALUE, pwm_value - env.RIGHT_MOTOR_CORRECTION_PWM_VALUE)
+        self.setMotorModel(pwm_value - int(env.LEFT_MOTOR_CORRECTION_PWM_VALUE), pwm_value - int(env.RIGHT_MOTOR_CORRECTION_PWM_VALUE))
     
     def stop(self):
         self.setMotorModel(0, 0) 
