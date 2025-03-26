@@ -18,6 +18,7 @@ OLLAMA_EN_SEARCH_VISUAL_PROMPT = os.getenv('OLLAMA_EN_SEARCH_VISUAL_PROMPT')
 OLLAMA_VISION_DECISION_PROMPT = os.getenv('OLLAMA_VISION_DECISION_PROMPT')
 DB_FILE = os.getenv('DB_FILE')
 OLLAMA_HOST = os.getenv('OLLAMA_HOST')
+WHISPER_HOST = os.getenv('WHISPER_HOST')
 
 PERSONALITY = (lambda f: f.read())(open("personality.info", "r", encoding="utf-8"))
 PURPOSE = (lambda f: f.read())(open("purpose.info", "r", encoding="utf-8"))
