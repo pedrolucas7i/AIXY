@@ -1,5 +1,6 @@
 from time import sleep
 import logging
+import conversation
 import utils
 import llm
 import env
@@ -30,6 +31,3 @@ def get(thing, color=None, localization=None):
             utils.addMemory(thing, definition, 'info')
             
     return definition
-
-def interact(receved):
-    

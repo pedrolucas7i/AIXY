@@ -2,6 +2,8 @@ import threading
 import logging
 import vision
 import utils
+import conversation
+import brain
 import env
 
 
@@ -18,10 +20,12 @@ def autonomous_drive(thing, localization=None):
 
 
 def human_interaction():
-    
+    conversation.commonConversations()
 
 
 if __name__ == "__main__":
     print(f"AIXY (V{env.AIXY_SOFTWARE_VERSION}) ALIVE!!!")
-    LLMAD_processor = threading.Thread(target=autonomous_drive, args=(None, None), daemon=True)
-    LLMAD_processor.start()
+    LVMAD_processor = threading.Thread(target=autonomous_drive, args=(None, None), daemon=True)
+    LVMAD_processor.start()
+    LLMAC_processor = threading.Thread(target=human_interaction)
+    LLMAC_processor.start()
