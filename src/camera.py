@@ -12,4 +12,4 @@ def captured_images():
    
         
 camera = PiCamera()
-camera.resolution = (1024, 768)
+camera.resolution = (512,384)
