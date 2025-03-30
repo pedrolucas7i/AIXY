@@ -13,7 +13,7 @@ SAMPLE_RATE = 16000  # Whisper requires 16kHz audio
 CHANNELS = 1  # Mono
 BLOCK_SIZE = 1024  # Block size for continuous recording
 SILENCE_THRESHOLD = 1000  # Adjustable silence detection threshold
-SILENCE_TIME = 1.5  # Time (seconds) to confirm silence before processing
+SILENCE_TIME = 3  # Time (seconds) to confirm silence before processing
 
 # Queue to store recorded audio chunks
 audio_queue = queue.Queue()
@@ -38,23 +38,25 @@ def audio_generator():
 
     with sd.InputStream(samplerate=SAMPLE_RATE, channels=CHANNELS, dtype=np.int16,
                         blocksize=BLOCK_SIZE, callback=audio_callback):
-        while True:
+        while True:  # This loop will keep running until a valid segment is detected
             data = audio_queue.get()
             buffer = np.concatenate((buffer, data.flatten()))
 
-            # Check for silence
-            if detect_silence(buffer):
+            if detect_silence(buffer):  # Check if silence is detected
                 if silence_start_time is None:
                     silence_start_time = time.time()  # Start silence timer
                 elif time.time() - silence_start_time > SILENCE_TIME:
-                    if len(buffer) > SAMPLE_RATE * 0.5:  # Ensure at least 0.5s of speech
-                        text = send_audio_to_server(buffer)  # Send to server
+                    # Silence detected for enough time, process the audio
+                    if len(buffer) > SAMPLE_RATE * 2:  # Ensure enough audio is captured
+                        text = send_audio_to_server(buffer)  # Send to server for transcription
                         print(f"Received: {text}")  # Show ongoing transcription
-                        yield text
-                    buffer = np.array([], dtype=np.int16)  # Reset buffer
+                        if text:  # If text is received from the server
+                            return text  # Return the transcription
+                    buffer = np.array([], dtype=np.int16)  # Reset buffer after processing
                     silence_start_time = None  # Reset silence detection
             else:
-                silence_start_time = None  # Reset timer if voice is detected
+                silence_start_time = None  # Reset silence timer when speaking continues
+
 
 def send_audio_to_server(audio_buffer):
     """Saves recorded audio as a WAV file and sends it to the server for transcription."""
