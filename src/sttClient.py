@@ -6,6 +6,7 @@ import wave
 import requests
 import os
 import time
+import env
 
 # Audio parameters
 SAMPLE_RATE = 16000  # Whisper requires 16kHz audio
@@ -17,7 +18,7 @@ SILENCE_TIME = 1.5  # Time (seconds) to confirm silence before processing
 # Queue to store recorded audio chunks
 audio_queue = queue.Queue()
 
-SERVER_URL = "http://127.0.0.1:5000/transcribe"
+SERVER_URL = env.WHISPER_HOST
 
 def audio_callback(indata, frames, time, status):
     """Callback function that continuously records audio."""

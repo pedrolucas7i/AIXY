@@ -11,9 +11,9 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %
 
 def autonomous_drive(thing, localization=None):
     if not thing:
-        decision = vision.decide()
+        decision = next(vision.decide())
     else:
-        decision = vision.find(thing, localization)
+        decision = next(vision.find(thing, localization))
 
     utils.drive(utils.movements[decision].get('direction'), utils.movements[decision].get('speed'))
     utils.calculatedWaitingTime(0.7)

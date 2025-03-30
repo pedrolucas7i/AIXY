@@ -13,10 +13,10 @@ def decide():
     for frame in camera.captured_images():
         decision = llm.get(env.OLLAMA_VISION_MODEL, env.OLLAMA_VISION_DECISION_PROMPT, frame)
         logging.info(f"Decided: {decision}")
-        yield decision
+        yield decision['response']
 
 def find(thing, localization=None):
     for frame in camera.captured_images():
         decision = llm.get(env.OLLAMA_VISION_MODEL, utils.findObjectVisionPrompt(thing, localization), frame)
         logging.info(f"Decided: {decision}")
-        yield decision
+        yield decision['response']
