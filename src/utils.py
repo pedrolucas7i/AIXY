@@ -50,7 +50,7 @@ def init_db():
 
 
 def accessMemory(thing, category):
-    if category is 'info' or category is 'visual':
+    if category == 'info' or category == 'visual':
         conn = sqlite3.connect(env.DB_FILE)
         cursor = conn.cursor()
         cursor.execute("SELECT definition FROM crypto_prices WHERE (category = ?) AND (thing = ?)", (category, thing))
