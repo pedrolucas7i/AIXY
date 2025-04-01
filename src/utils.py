@@ -10,19 +10,19 @@ import os
 movements = {
     "forward": {"direction": "forward", "speed": 2},
     "backward": {"direction": "backward", "speed": 2},
-    "slowforward": {"direction": "forward", "speed": 1},
-    "slowbackward": {"direction": "backward", "speed": 1},
-    "fastforward": {"direction": "forward", "speed": 3},
-    "fastbackward": {"direction": "backward", "speed": 3},
+    "slow forward": {"direction": "forward", "speed": 1},
+    "slow backward": {"direction": "backward", "speed": 1},
+    "fast forward": {"direction": "forward", "speed": 3},
+    "fast backward": {"direction": "backward", "speed": 3},
     "faster forward": {"direction": "forward", "speed": 4},
     "left": {"direction": "left", "speed": 2},
     "right": {"direction": "right", "speed": 2},
-    "leftfast": {"direction": "left", "speed": 3},
-    "rightfast": {"direction": "right", "speed": 3},
-    "leftvery fast": {"direction": "left", "speed": 4},
-    "rightvery fast": {"direction": "right", "speed": 4},
-    "lefthiper fast": {"direction": "left", "speed": 4},
-    "righthiper fast": {"direction": "right", "speed": 4},
+    "left fast": {"direction": "left", "speed": 3},
+    "right fast": {"direction": "right", "speed": 3},
+    "left very fast": {"direction": "left", "speed": 4},
+    "right very fast": {"direction": "right", "speed": 4},
+    "left hiper fast": {"direction": "left", "speed": 4},
+    "right hiper fast": {"direction": "right", "speed": 4},
 }
 
 # Configure logging
@@ -95,6 +95,8 @@ def drive(direction, intensity):
     elif 'finded' in direction:
         Clamp = tank.Clamp()
         Clamp.down()
+    sleep(0.35)
+    
         
 
 def findObjectVisionPrompt(thing, localization=None, MemoryFile=True):
