@@ -1,5 +1,5 @@
 # Import the Motor class from the gpiozero library
-from gpiozero import Motor as Motors, DistanceSensor, PWMSoftwareFallback
+from gpiozero import Motor as Motors, DistanceSensor, PWMSoftwareFallback, Servo
 from time import sleep
 import warnings
 import env
@@ -139,50 +139,51 @@ class Clamp:
     def __init__(self):
         self.servo = None
         if self.servo is None:
-            self.servo = Servo()
+            self.servo0 = Servo(12)
+            self.servo1 = Servo(13)
         
     def up(self):
         """Perform clamp up operation"""
         # Get distance from ultrasonic sensor
-        distance = self.sonic.get_distance()
-        motor = Motor()
-        # Control motor based on distance
-        if distance <= 5:
-            motor.driveBackward(2)
-        elif distance > 5 and distance < 7.5:
-            motor.driveBackward(1)
-        elif distance >= 7.5 and distance <= 7.7:
-            motor.stop()
+#        distance = self.sonic.get_distance()
+#        motor = Motor()
+#        # Control motor based on distance
+#        if distance <= 5:
+#            motor.driveBackward(2)
+#        elif distance > 5 and distance < 7.5:
+#            motor.driveBackward(1)
+#        elif distance >= 7.5 and distance <= 7.7:
+#            motor.stop()
             # Adjust servos to clamp up
-            for i in range(140, 90, -1):
-                self.servo.setServoAngle('1', i)
-                sleep(0.01)
-            for i in range(90, 130, 1):
-                self.servo.setServoAngle('0', i)
-                sleep(0.01)  
-            for i in range(90, 140, 1):
-                self.servo.setServoAngle('1', i)
-                sleep(0.01)
-        elif distance > 7.7 and distance < 11:
-            motor.driveForward(1)
-        elif distance >= 11:
-            motor.driveForward(2)
+        for i in range(180, 90, -1):
+            self.servo1.value = (i - 90) / 90
+            sleep(0.01)
+        for i in range(170, 90, -1):
+            self.servo0.value = (i - 90) / 90
+            sleep(0.01)  
+        for i in range(90, 180, 1):
+            self.servo1.value = (i - 90) / 90
+            sleep(0.01)
+#        elif distance > 7.7 and distance < 11:
+#            motor.driveForward(1)
+#        elif distance >= 11:
+#            motor.driveForward(2)
         # Sleep for a short duration
-        sleep(0.05) 
+#        sleep(0.05) 
 
     def down(self):
         """Perform clamp down operation"""
-        motor = Motor()
-        motor.stop()
+#        motor = Motor()
+#        motor.stop()
         # Adjust servos to clamp down
-        for i in range(140, 90, -1):
-            self.servo.setServoAngle('1', i)
+        for i in range(180, 90, -1):
+            self.servo1.value = (i - 90) / 90
             sleep(0.01)
-        for i in range(130, 90, -1):
-            self.servo.setServoAngle('0', i)
-            sleep(0.01)
-        for i in range(90, 140, 1):
-            self.servo.setServoAngle('1', i)
+        for i in range(90, 170, 1):
+            self.servo0.value = (i - 90) / 90
+            sleep(0.01)  
+        for i in range(90, 180, 1):
+            self.servo1.value = (i - 90) / 90
             sleep(0.01)
 
 # Main program logic follows:
