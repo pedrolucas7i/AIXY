@@ -97,7 +97,6 @@ def drive(direction, intensity):
         Clamp.down()
     sleep(0.35)
     
-        
 
 def findObjectVisionPrompt(thing, localization=None, MemoryFile=True):
     definition = None
