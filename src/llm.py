@@ -14,4 +14,4 @@ def get(model, prompt, image_stream=None):
         try:
             return client.generate(model, prompt, images=[image_stream])['response']
         except Exception as e:
-            logging.error(f"An error occurred in llm.get(image): {str(e)}")
+            logging.error(f"An error occurred in llm.get(image): {str(e)}")3

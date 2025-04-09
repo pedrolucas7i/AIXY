@@ -31,5 +31,6 @@ if __name__ == "__main__":
     tts.text_to_speech(env.FIRST_EN_MESSAGE)
     LVMAD_processor = threading.Thread(target=autonomous_drive, args=(None, None), daemon=True)
     LVMAD_processor.start()
+    
     LLMAC_processor = threading.Thread(target=human_interaction)
     LLMAC_processor.start()

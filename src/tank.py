@@ -190,16 +190,24 @@ class Clamp:
 if __name__ == '__main__':
     print('MOTOR TESTING STARTED ... \n')  # Print a start message
     motor = Motor()                        # Create an instance of the tankMotor class
-
-    try:
-        motor.driveLeft(4)
-        sleep(0.35)
-        motor.driveRight(4)
-        sleep(0.35)
-        motor.driveForward(1)
-        sleep(0.2)
-        motor.driveBackward(1)
-        sleep(0.2)
-    except KeyboardInterrupt:              # Handle a keyboard interrupt (Ctrl+C)
-        motor.setMotorModel(0, 0)          # Stop both motors
-        motor.close()                      # Close the motors to release resources
+    while True:
+        try:
+            motor.driveLeft(4)
+            sleep(0.35)
+            motor.driveForward(1)
+            sleep(0.5)
+            motor.driveLeft(4)
+            sleep(0.35)
+            motor.driveForward(1)
+            sleep(0.5)
+            motor.driveLeft(4)
+            sleep(0.35)
+            motor.driveForward(1)
+            sleep(0.5)
+            motor.driveLeft(4)
+            sleep(0.35)
+            motor.driveForward(1)
+            sleep(0.5)
+        except KeyboardInterrupt:              # Handle a keyboard interrupt (Ctrl+C)
+            motor.setMotorModel(0, 0)          # Stop both motors
+            motor.close()                      # Close the motors to release resources
