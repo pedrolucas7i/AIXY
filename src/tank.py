@@ -47,57 +47,10 @@ class Motor:
     def setMotorModel(self, duty1, duty2):
         """Set the duty cycle for both motors and ensure they are within the valid range."""
         duty1, duty2 = self.duty_range(duty1, duty2)  # Clamp the duty cycle values
-        self.left_Wheel(duty1)   # Control the left wheel
-        self.right_Wheel(duty2)  # Control the right wheel
+        self.left_Wheel(-duty1)   # Control the left wheel
+        self.right_Wheel(-duty2)  # Control the right wheel
         
     def driveBackward(self, speedLevel=1):
-        """Drive Backward with diferent speed levels"""
-        pwm_value = 800
-        
-        if speedLevel == 2:
-            pwm_value = 1200
-        elif speedLevel == 3:
-            pwm_value = 2640
-        elif speedLevel == 4:
-            pwm_value = 4000
-        
-        self.setMotorModel(pwm_value + int(env.LEFT_MOTOR_CORRECTION_PWM_VALUE), pwm_value + int(env.RIGHT_MOTOR_CORRECTION_PWM_VALUE))
-        
-    def driveRight(self, turnLevel=1):
-        """Drive Right with diferent turn levels"""
-        left_pwm = 2640
-        right_pwm = 4000
-        
-        if turnLevel == 2:
-            left_pwm = 1200
-            right_pwm = 4000
-        elif turnLevel == 3:
-            left_pwm = 0
-            right_pwm = 2640
-        elif turnLevel == 4:
-            left_pwm = -1200
-            right_pwm = 1200
-        
-        self.setMotorModel(left_pwm + int(env.LEFT_MOTOR_CORRECTION_PWM_VALUE), right_pwm + int(env.RIGHT_MOTOR_CORRECTION_PWM_VALUE))
-        
-    def driveLeft(self, turnLevel=1):
-        """Drive Left with diferent turn levels"""
-        left_pwm = 4000
-        right_pwm = 2640
-        
-        if turnLevel == 2:
-            left_pwm = 4000
-            right_pwm = 1200
-        elif turnLevel == 3:
-            left_pwm = 2640
-            right_pwm = 0
-        elif turnLevel == 4:
-            left_pwm = 1200
-            right_pwm = -1200
-        
-        self.setMotorModel(left_pwm + int(env.LEFT_MOTOR_CORRECTION_PWM_VALUE), right_pwm + int(env.RIGHT_MOTOR_CORRECTION_PWM_VALUE))
-        
-    def driveForward(self, speedLevel=1):
         """Drive Backward with diferent speed levels"""
         pwm_value = -800
         
@@ -107,6 +60,53 @@ class Motor:
             pwm_value = -2640
         elif speedLevel == 4:
             pwm_value = -4000
+        
+        self.setMotorModel(pwm_value + int(env.LEFT_MOTOR_CORRECTION_PWM_VALUE), pwm_value + int(env.RIGHT_MOTOR_CORRECTION_PWM_VALUE))
+        
+    def driveRight(self, turnLevel=1):
+        """Drive Right with diferent turn levels"""
+        left_pwm = -800
+        right_pwm = 800
+        
+        if turnLevel == 2:
+            left_pwm = -1200
+            right_pwm = 1200
+        elif turnLevel == 3:
+            left_pwm = -2640
+            right_pwm = 2640
+        elif turnLevel == 4:
+            left_pwm = -4000
+            right_pwm = 4000
+        
+        self.setMotorModel(-left_pwm + int(env.LEFT_MOTOR_CORRECTION_PWM_VALUE), -right_pwm + int(env.RIGHT_MOTOR_CORRECTION_PWM_VALUE))
+        
+    def driveLeft(self, turnLevel=1):
+        """Drive Left with diferent turn levels"""
+        left_pwm = 800
+        right_pwm = -800
+        
+        if turnLevel == 2:
+            left_pwm = 1200
+            right_pwm = -1200
+        elif turnLevel == 3:
+            left_pwm = 2640
+            right_pwm = -2640
+        elif turnLevel == 4:
+            left_pwm = 4000
+            right_pwm = -4000
+        
+        self.setMotorModel(-left_pwm + int(env.LEFT_MOTOR_CORRECTION_PWM_VALUE), -right_pwm + int(env.RIGHT_MOTOR_CORRECTION_PWM_VALUE))
+        
+    def driveForward(self, speedLevel=1):
+        """Drive Backward with diferent speed levels"""
+        pwm_value = 800
+        
+        if speedLevel == 2:
+            pwm_value = 1200
+        elif speedLevel == 3:
+            pwm_value = 2640
+        elif speedLevel == 4:
+            pwm_value = 4000
         
         self.setMotorModel(pwm_value - int(env.LEFT_MOTOR_CORRECTION_PWM_VALUE), pwm_value - int(env.RIGHT_MOTOR_CORRECTION_PWM_VALUE))
     

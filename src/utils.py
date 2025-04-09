@@ -96,6 +96,7 @@ def drive(direction, intensity):
         Clamp = tank.Clamp()
         Clamp.down()
     sleep(0.35)
+    Motors.stop()
     
 
 def findObjectVisionPrompt(thing, localization=None, MemoryFile=True):
