@@ -49,14 +49,12 @@ def audio_generator():
                     # Silence detected for enough time, process the audio
                     if len(buffer) > SAMPLE_RATE * 2:  # Ensure enough audio is captured
                         text = send_audio_to_server(buffer)  # Send to server for transcription
-                        print(f"Received: {text}")  # Show ongoing transcription
-                        if text:  # If text is received from the server
+                        if text:
                             return text  # Return the transcription
                     buffer = np.array([], dtype=np.int16)  # Reset buffer after processing
                     silence_start_time = None  # Reset silence detection
             else:
                 silence_start_time = None  # Reset silence timer when speaking continues
-
 
 def send_audio_to_server(audio_buffer):
     """Saves recorded audio as a WAV file and sends it to the server for transcription."""
@@ -82,6 +80,18 @@ def send_audio_to_server(audio_buffer):
         print(f"Error: {response.status_code}, {response.text}")
         return ""
 
-if __name__ == "__main__":
+def multi_segment_generator(end_keywords=["fim"]):
+    """
+    Continua ouvindo e transcrevendo até que uma palavra-chave seja dita.
+    Retorna a transcrição completa.
+    """
+    full_transcript = ""
+
     while True:
-        print(list(audio_generator()))
+        segment = audio_generator()
+        if segment:
+            full_transcript += segment + " "
+            if any(keyword in segment.lower() for keyword in end_keywords):
+                break
+
+    return full_transcript.strip()

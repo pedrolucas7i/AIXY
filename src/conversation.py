@@ -5,7 +5,7 @@ import env
 
 def commonConversations():
     # Getting the transcribed speech-to-text data
-    stt_data = ' '.join(list(sttClient.audio_generator()))  # Joining words to form a sentence
+    stt_data = ' '.join(list(sttClient.multi_segment_generator("end")))  # Joining words to form a sentence
 
     if stt_data:  # Check if the transcribed text is not empty
         # Build the prompt for the language model, incorporating the environment variables
@@ -18,7 +18,7 @@ def commonConversations():
             f"- Purpose: {env.PURPOSE}\n"
             f"- Personality: {env.PERSONALITY}\n"
             f"- Language model: {env.OLLAMA_LANGUAGE_MODEL}\n\n"
-            f"The user said: {stt_data}\n\n"
+            f"The user said: {stt_data.strip()}\n\n"
             f"Based on this, provide a concise and relevant response without adding unnecessary details."
         )
         
