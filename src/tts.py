@@ -1,37 +1,46 @@
-import logging
-import pyttsx3
+import asyncio
+import aiohttp
+from playsound import playsound
 import threading
-import time
+import env
 
-# Configure logging
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+async def speek(text):
+    # URL of the AI server endpoint
+    url = env.ChatTTS_HOST
+    
+    # Prepare the JSON payload
+    payload = {"text": text}
 
-# Initialize TTS engine globally
-logging.info("Initializing TTS")
-tts = pyttsx3.init("espeak")
-tts.setProperty('rate', tts.getProperty('rate') - 20)
+    try:
+        print(f"Sending text to server: {text}")
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, json=payload) as response:
+                # Check if the response is successful
+                if response.status == 200:
+                    audio_data = await response.read()
 
-def text_to_speech(message):
-    logging.info(f"Converting message to speech: {message}")
-    print('\nTTS:\n', message.strip())
+                    # Save the received audio file
+                    with open("output_audio.wav", "wb") as audio_file:
+                        audio_file.write(audio_data)
+                    print("Audio file saved successfully: output_audio.wav")
 
-    # Define the speech function that uses the initialized TTS engine
-    def play_speech():
-        try:
-            logging.info("Converting message to speech")
-            
-            # Adjust the speech rate (optional)
-            rate = tts.getProperty('rate')
-            
-            # Add a short delay before converting message to speech
-            time.sleep(0.5)  # Adjust the delay as needed
-            
-            tts.say(message)
-            tts.runAndWait()  # Wait for speech playback to complete
-            logging.info("Speech playback completed")
-        except Exception as e:
-            logging.error(f"An error occurred during speech playback: {str(e)}")
+                    # Run the function to play audio after saving it
+                    await asyncio.to_thread(play_audio)
 
-    # Start the speech in a separate thread
-    speech_thread = threading.Thread(target=play_speech)
-    speech_thread.start()
+                else:
+                    print(f"Error: {response.status}, {await response.text()}")
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+def play_audio():
+    try:
+        playsound("output_audio.wav")
+        print("Audio played successfully!")
+    except Exception as e:
+        print(f"An error occurred while playing the audio: {e}")
+
+# You can run the asyncio loop to call text_to_speech:
+if __name__ == "__main__":
+    text = "Hello, this is a test message."
+    asyncio.run(text_to_speech(text))

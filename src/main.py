@@ -28,7 +28,7 @@ def human_interaction():
 
 if __name__ == "__main__":
     print(f"AIXY (V{env.AIXY_SOFTWARE_VERSION}) ALIVE!!!")
-    tts.text_to_speech(env.FIRST_EN_MESSAGE)
+    tts.speek(env.FIRST_EN_MESSAGE)
     LVMAD_processor = threading.Thread(target=autonomous_drive, args=(None, None), daemon=True)
     LVMAD_processor.start()
     

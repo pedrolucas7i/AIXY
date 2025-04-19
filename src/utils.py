@@ -99,7 +99,7 @@ def drive(direction, intensity):
     Motors.stop()
     
 
-def findObjectVisionPrompt(thing, localization=None, MemoryFile=True):
+def findObjectVisionPrompt(thing, localization=None, MemoryFile=True, additionalPrompt=None):
     definition = None
 
     if MemoryFile:
@@ -109,9 +109,15 @@ def findObjectVisionPrompt(thing, localization=None, MemoryFile=True):
         definition = llm.get(env.OLLAMA_LANGUAGE_MODEL, env.OLLAMA_EN_SEARCH_VISUAL_PROMPT + thing)
         addMemory(thing, definition, 'visual')
     
-    prompt = f"Your main objective is to detect the '{thing}' object and approach it, when you find it you must come face to face with it, with a distance between you of 100mm, in this case you should ignore all other outputs and only provide the word 'finded', without additional explanations. Visual description: {definition}"
+    if additionalPrompt:
+        prompt = f"Your main objective is to detect the '{thing}' object and approach it, when you find it you must come face to face with it, with a distance between you of 100mm, in this case you should ignore all other outputs and only provide the word 'finded', without additional explanations. Visual description: {definition}" + "\n\n" + str(additionalPrompt)
     
-    if localization is not None:
-        prompt = f"Your main objective is to detect the '{thing}' object in the '{localization}' localization and approach it, when you find it you must come face to face with it, with a distance between you of 100mm, in this case you should ignore all other outputs and only provide the word 'finded', without additional explanations. Visual description: {definition}"
+        if localization is not None:
+            prompt = f"Your main objective is to detect the '{thing}' object in the '{localization}' localization and approach it, when you find it you must come face to face with it, with a distance between you of 100mm, in this case you should ignore all other outputs and only provide the word 'finded', without additional explanations. Visual description: {definition}" + "\n\n" + str(additionalPrompt)
+    else:
+        prompt = f"Your main objective is to detect the '{thing}' object and approach it, when you find it you must come face to face with it, with a distance between you of 100mm, in this case you should ignore all other outputs and only provide the word 'finded', without additional explanations. Visual description: {definition}"
+    
+        if localization is not None:
+            prompt = f"Your main objective is to detect the '{thing}' object in the '{localization}' localization and approach it, when you find it you must come face to face with it, with a distance between you of 100mm, in this case you should ignore all other outputs and only provide the word 'finded', without additional explanations. Visual description: {definition}"
         
     return env.OLLAMA_VISION_DECISION_PROMPT + prompt
