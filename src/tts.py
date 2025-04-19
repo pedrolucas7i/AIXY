@@ -1,5 +1,5 @@
 import requests
-from playsound import playsound
+import simpleaudio as sa
 import env
 
 def speek(text):
@@ -15,17 +15,18 @@ def speek(text):
                 audio_file.write(response.content)
             print("Audio file saved successfully: output_audio.wav")
 
-            play_audio()
+            play_audio("output_audio.wav")
         else:
             print(f"Error: {response.status_code}, {response.text}")
 
     except Exception as e:
         print(f"An error occurred: {e}")
 
-def play_audio():
+def play_audio(file_path):
     try:
-        playsound("output_audio.wav")
-        print("Audio played successfully!")
+        wave_obj = sa.WaveObject.from_wave_file(file_path)
+        play_obj = wave_obj.play()
+        play_obj.wait_done()  # Wait until sound finishes playing
     except Exception as e:
         print(f"An error occurred while playing the audio: {e}")
 
