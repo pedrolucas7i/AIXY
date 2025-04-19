@@ -99,4 +99,4 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 For more information or inquiries, you can contact me via email:  
 **pedrolucas dot core7i @gmail dot com**
 
---
+---
