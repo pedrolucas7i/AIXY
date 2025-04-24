@@ -67,7 +67,7 @@ def joystick_listener():
 # Main execution
 if __name__ == "__main__":
     print(f"AIXY (V{env.AIXY_SOFTWARE_VERSION}) ALIVE!!!")
-    tts.speak(text)
+    tts.speak(env.FIRST_EN_MESSAGE)
 
     # Start AI driving thread
     ai_thread = threading.Thread(target=drive, args=(None, None), daemon=True)
