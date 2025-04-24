@@ -1,31 +1,33 @@
 import logging
-import pyttsx3
 import threading
-import time
+import asyncio
+import edge_tts
+import os
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# Initialize TTS engine globally
-logging.info("Initializing TTS")
-engine = pyttsx3.init(driverName='espeak')
-engine.setProperty('rate', engine.getProperty('rate') - 20)
+# Voice settings
+VOICE_ID = "en-US-JennyNeural"  # Soft, young adult female voice
+RATE = "+5%"  # Slightly faster speech rate
 
 def speak(text):
     logging.info(f"Converting message to speech: {text}")
     print('\nTTS:\n', text.strip())
 
-    # Define the speech function that uses the initialized TTS engine
-    def play_speech():
+    async def generate_and_play():
         try:
-            logging.info("Converting message to speech")  
-            engine.setProperty('voice', 'mb-us2')
-            engine.say(text)
-            engine.runAndWait()  # Wait for speech playback to complete
-            logging.info("Speech playback completed")
+            logging.info("Generating speech with edge-tts")
+            communicate = edge_tts.Communicate(text, voice=VOICE_ID, rate=RATE)
+            await communicate.save("output.mp3")
+            logging.info("Audio saved, now playing")
+            os.system("mpg123 output.mp3")
         except Exception as e:
             logging.error(f"An error occurred during speech playback: {str(e)}")
 
-    # Start the speech in a separate thread
-    speech_thread = threading.Thread(target=play_speech)
+    def threaded_play():
+        asyncio.run(generate_and_play())
+
+    # Run the speech generation and playback in a separate thread
+    speech_thread = threading.Thread(target=threaded_play)
     speech_thread.start()
