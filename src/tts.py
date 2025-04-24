@@ -12,8 +12,8 @@ engine = pyttsx3.init(driverName='espeak')
 engine.setProperty('rate', engine.getProperty('rate') - 20)
 
 def speak(text):
-    logging.info(f"Converting message to speech: {message}")
-    print('\nTTS:\n', message.strip())
+    logging.info(f"Converting message to speech: {text}")
+    print('\nTTS:\n', text.strip())
 
     # Define the speech function that uses the initialized TTS engine
     def play_speech():
