@@ -5,44 +5,50 @@ from edge_tts import Communicate
 import pygame
 import threading
 
-# Initialize the Pygame mixer once
+# Initialize pygame mixer just once
 pygame.mixer.init()
 
-# Default voice
 VOICE = "en-US-JennyNeural"
+
+# Shared lock to prevent overlapping calls
+audio_lock = threading.Lock()
 
 def speak(text: str):
     try:
         if not text.strip():
-            print("[TTS] Empty text provided, skipping TTS.")
+            print("[TTS] Empty text, skipping...")
             return
 
-        # Ensure main thread is still alive to avoid shutdown errors
-        if not threading.main_thread().is_alive():
-            print("[TTS] Main thread is not alive. Aborting TTS playback.")
-            return
+        # Prevent overlapping playback with lock
+        with audio_lock:
+            filename = f"output_{uuid.uuid4().hex}.mp3"
+            print(f"[TTS] Generating speech for: {text}")
 
-        print(f"[TTS] Generating speech for: {text}")
-        filename = f"output_{uuid.uuid4().hex}.mp3"
+            # Generate TTS
+            try:
+                loop = asyncio.get_event_loop()
+            except RuntimeError:
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
 
-        # Generate TTS file
-        asyncio.run(generate_tts(text, filename))
+            if loop.is_running():
+                coro = generate_tts(text, filename)
+                asyncio.run_coroutine_threadsafe(coro, loop).result()
+            else:
+                loop.run_until_complete(generate_tts(text, filename))
 
-        # Play the audio file
-        print("[TTS] Playing audio...")
-        pygame.mixer.music.load(filename)
-        pygame.mixer.music.play()
+            # Play with pygame
+            print("[TTS] Playing audio...")
+            pygame.mixer.music.load(filename)
+            pygame.mixer.music.play()
+            while pygame.mixer.music.get_busy():
+                pygame.time.Clock().tick(10)
 
-        while pygame.mixer.music.get_busy():
-            pygame.time.Clock().tick(10)  # Wait for playback to finish
-
-        print("[TTS] Playback finished.")
-
-        # Remove temporary audio file
-        os.remove(filename)
+            print("[TTS] Playback finished.")
+            os.remove(filename)
 
     except Exception as e:
-        print(f"[TTS] Error during TTS playback: {e}")
+        print(f"[TTS] Error: {e}")
 
 async def generate_tts(text: str, filename: str):
     communicator = Communicate(text=text, voice=VOICE)
