@@ -4,52 +4,64 @@ import edge_tts
 import os
 import pygame
 
-# Configure logging
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+# Setup logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# Voice settings
-VOICE_ID = "en-US-JennyNeural"  # Soft, young adult female voice
-RATE = "+5%"  # Slightly faster speech rate
+VOICE_ID = "en-US-JennyNeural"
+RATE = "+5%"
+OUTPUT_FILE = "output.mp3"
 
-# Initialize the event loop globally (to avoid creating it multiple times)
-loop = asyncio.get_event_loop()
+# Initialize Pygame mixer
+pygame.mixer.init()
 
-# Function to generate and play speech asynchronously
-async def generate_and_play(text):
-    try:
-        logging.info("Generating speech with edge-tts")
-        communicate = edge_tts.Communicate(text, voice=VOICE_ID, rate=RATE)
-        output_file = "output.mp3"
-        await communicate.save(output_file)
-        logging.info(f"Audio saved as {output_file}, now playing")
-
-        # Initialize pygame mixer for audio playback (ensure pygame is initialized each time)
-        pygame.mixer.quit()  # Quit any previous mixer instance
-        pygame.mixer.init()  # Reinitialize the mixer for each execution
-
-        pygame.mixer.music.load(output_file)
-        pygame.mixer.music.play()
-
-        # Wait for playback to finish
-        while pygame.mixer.music.get_busy():
-            await asyncio.sleep(1)
-
-        # Clean up after playback
-        os.remove(output_file)
-        logging.info("Audio playback finished and file deleted.")
-
-    except Exception as e:
-        logging.error(f"An error occurred during speech playback: {str(e)}")
+# Use this to prevent reuse after interpreter shutdown
+_loop = None
+_shutdown = False
 
 
-# Public function to call from outside the module
-def speak(text):
+async def _generate_tts(text):
+    logging.info("Generating speech with edge-tts")
+    communicate = edge_tts.Communicate(text, voice=VOICE_ID, rate=RATE)
+    await communicate.save(OUTPUT_FILE)
+    logging.info(f"Audio saved as {OUTPUT_FILE}, now playing")
+
+    pygame.mixer.music.load(OUTPUT_FILE)
+    pygame.mixer.music.play()
+
+    while pygame.mixer.music.get_busy():
+        await asyncio.sleep(0.1)
+
+    os.remove(OUTPUT_FILE)
+    logging.info("Audio playback finished and file deleted.")
+
+
+def speak(text: str):
+    global _loop, _shutdown
+
+    if _shutdown:
+        logging.error("TTS system is shut down, cannot schedule new tasks.")
+        return
+
     logging.info(f"Converting message to speech: {text}")
-    print('\nTTS:\n', text.strip())
+    print("\nTTS:\n", text.strip())
 
-    # Ensure we're using the existing event loop
-    loop.run_until_complete(generate_and_play(text))
+    try:
+        if _loop is None or _loop.is_closed():
+            _loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(_loop)
 
-# Optional: If you want to run this module directly, you can test it like this:
-# if __name__ == "__main__":
-#     speak("Hello! This is a test message.")
+        asyncio.run_coroutine_threadsafe(_generate_tts(text), _loop)
+
+    except RuntimeError as e:
+        logging.error(f"Runtime error during speech playback: {str(e)}")
+    except Exception as e:
+        logging.error(f"General error during speech playback: {str(e)}")
+
+
+def shutdown_tts():
+    global _loop, _shutdown
+    _shutdown = True
+    if _loop and not _loop.is_closed():
+        _loop.call_soon_threadsafe(_loop.stop)
+        _loop.close()
+        logging.info("TTS loop successfully shut down.")
