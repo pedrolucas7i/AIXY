@@ -1,8 +1,13 @@
-#!bin/bash
+#!/bin/bash
 
 echo """
 ===========================================================
                 AIXY PROJECT Voice Instalation
 ===========================================================
 """
-sudo apt install espeak mbrola mbrola-us1 mbrola-us2 mbrola-us3
+sudo apt update
+sudo apt install espeak libespeak-dev
+sudo apt install mbrola
+sudo apt install mbrola-us2
+
+echo "Instalation completed with success!"

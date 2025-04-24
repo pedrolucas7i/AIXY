@@ -8,7 +8,7 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %
 
 # Initialize TTS engine globally
 logging.info("Initializing TTS")
-tts = pyttsx3.init("mb-us2")
+tts = pyttsx3.init("mb/mb-us2")
 tts.setProperty('rate', tts.getProperty('rate') - 20)
 
 def speech(text):
