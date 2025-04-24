@@ -1,67 +1,49 @@
-import logging
 import asyncio
-import edge_tts
 import os
+import uuid
+from edge_tts import Communicate
 import pygame
+import threading
 
-# Setup logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
-VOICE_ID = "en-US-JennyNeural"
-RATE = "+5%"
-OUTPUT_FILE = "output.mp3"
-
-# Initialize Pygame mixer
+# Initialize the Pygame mixer once
 pygame.mixer.init()
 
-# Use this to prevent reuse after interpreter shutdown
-_loop = None
-_shutdown = False
-
-
-async def _generate_tts(text):
-    logging.info("Generating speech with edge-tts")
-    communicate = edge_tts.Communicate(text, voice=VOICE_ID, rate=RATE)
-    await communicate.save(OUTPUT_FILE)
-    logging.info(f"Audio saved as {OUTPUT_FILE}, now playing")
-
-    pygame.mixer.music.load(OUTPUT_FILE)
-    pygame.mixer.music.play()
-
-    while pygame.mixer.music.get_busy():
-        await asyncio.sleep(0.1)
-
-    os.remove(OUTPUT_FILE)
-    logging.info("Audio playback finished and file deleted.")
-
+# Default voice
+VOICE = "en-US-JennyNeural"
 
 def speak(text: str):
-    global _loop, _shutdown
-
-    if _shutdown:
-        logging.error("TTS system is shut down, cannot schedule new tasks.")
-        return
-
-    logging.info(f"Converting message to speech: {text}")
-    print("\nTTS:\n", text.strip())
-
     try:
-        if _loop is None or _loop.is_closed():
-            _loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(_loop)
+        if not text.strip():
+            print("[TTS] Empty text provided, skipping TTS.")
+            return
 
-        asyncio.run_coroutine_threadsafe(_generate_tts(text), _loop)
+        # Ensure main thread is still alive to avoid shutdown errors
+        if not threading.main_thread().is_alive():
+            print("[TTS] Main thread is not alive. Aborting TTS playback.")
+            return
 
-    except RuntimeError as e:
-        logging.error(f"Runtime error during speech playback: {str(e)}")
+        print(f"[TTS] Generating speech for: {text}")
+        filename = f"output_{uuid.uuid4().hex}.mp3"
+
+        # Generate TTS file
+        asyncio.run(generate_tts(text, filename))
+
+        # Play the audio file
+        print("[TTS] Playing audio...")
+        pygame.mixer.music.load(filename)
+        pygame.mixer.music.play()
+
+        while pygame.mixer.music.get_busy():
+            pygame.time.Clock().tick(10)  # Wait for playback to finish
+
+        print("[TTS] Playback finished.")
+
+        # Remove temporary audio file
+        os.remove(filename)
+
     except Exception as e:
-        logging.error(f"General error during speech playback: {str(e)}")
+        print(f"[TTS] Error during TTS playback: {e}")
 
-
-def shutdown_tts():
-    global _loop, _shutdown
-    _shutdown = True
-    if _loop and not _loop.is_closed():
-        _loop.call_soon_threadsafe(_loop.stop)
-        _loop.close()
-        logging.info("TTS loop successfully shut down.")
+async def generate_tts(text: str, filename: str):
+    communicator = Communicate(text=text, voice=VOICE)
+    await communicator.save(filename)
