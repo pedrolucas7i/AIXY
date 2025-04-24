@@ -37,3 +37,6 @@ if __name__ == "__main__":
     
     LLMAC_processor = threading.Thread(target=human_interaction)
     LLMAC_processor.start()
+
+    OA_system = threading.Thread(target=verifyObstacules)
+    OA_system.start()
