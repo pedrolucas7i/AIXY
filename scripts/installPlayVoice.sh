@@ -2,12 +2,9 @@
 
 echo """
 ===========================================================
-                AIXY PROJECT Voice Instalation
+        AIXY PROJECT Play Voice Program Instalation
 ===========================================================
 """
-sudo apt update
-sudo apt install espeak libespeak-dev
-sudo apt install mbrola
-sudo apt install mbrola-us2
+sudo apt install mpg123
 
 echo "Instalation completed with success!"
