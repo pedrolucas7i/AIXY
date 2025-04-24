@@ -97,6 +97,15 @@ def drive(direction, intensity):
         Clamp.down()
     sleep(0.35)
     Motors.stop()
+
+def verifyObstacules():
+    ultrassonic = tank.Ultrasonic()
+    Motors = tank.Motor()
+    if ultrassonic.get_distance() < 25:
+        Motors.driveLeft(2)
+        sleep(0.2)
+    
+    Motors.stop()
     
 
 def findObjectVisionPrompt(thing, localization=None, MemoryFile=True, additionalPrompt=None):
