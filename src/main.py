@@ -61,7 +61,7 @@ def joystick_listener():
             manual_mode = not manual_mode
             mode = "MANUAL" if manual_mode else "AUTONOMOUS"
             print(f"Switched to {mode} mode.")
-            tts.speek(f"{mode} mode activated.")
+            tts.speak(f"{mode} mode activated.")
             time.sleep(1.5)  # Prevent multiple toggles from one press
 
 # Main execution
