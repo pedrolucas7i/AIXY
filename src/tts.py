@@ -11,6 +11,10 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %
 VOICE_ID = "en-US-JennyNeural"  # Soft, young adult female voice
 RATE = "+5%"  # Slightly faster speech rate
 
+# Initialize the event loop globally (to avoid creating it multiple times)
+loop = asyncio.get_event_loop()
+
+# Function to generate and play speech asynchronously
 async def generate_and_play(text):
     try:
         logging.info("Generating speech with edge-tts")
@@ -38,13 +42,14 @@ async def generate_and_play(text):
         logging.error(f"An error occurred during speech playback: {str(e)}")
 
 
+# Public function to call from outside the module
 def speak(text):
     logging.info(f"Converting message to speech: {text}")
     print('\nTTS:\n', text.strip())
 
-    # Run the speech generation and playback using asyncio in the main thread
-    asyncio.run(generate_and_play(text))
+    # Ensure we're using the existing event loop
+    loop.run_until_complete(generate_and_play(text))
 
-
-# Example usage:
-speak("Hello, this is a test message to be converted to speech.")
+# Optional: If you want to run this module directly, you can test it like this:
+# if __name__ == "__main__":
+#     speak("Hello! This is a test message.")
