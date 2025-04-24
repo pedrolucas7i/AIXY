@@ -19,8 +19,10 @@ async def generate_and_play(text):
         await communicate.save(output_file)
         logging.info(f"Audio saved as {output_file}, now playing")
 
-        # Initialize pygame mixer for audio playback
-        pygame.mixer.init()
+        # Initialize pygame mixer for audio playback (ensure pygame is initialized each time)
+        pygame.mixer.quit()  # Quit any previous mixer instance
+        pygame.mixer.init()  # Reinitialize the mixer for each execution
+
         pygame.mixer.music.load(output_file)
         pygame.mixer.music.play()
 
@@ -42,3 +44,7 @@ def speak(text):
 
     # Run the speech generation and playback using asyncio in the main thread
     asyncio.run(generate_and_play(text))
+
+
+# Example usage:
+speak("Hello, this is a test message to be converted to speech.")
