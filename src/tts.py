@@ -1,35 +1,37 @@
-import requests
-import simpleaudio as sa
-import env
+import logging
+import pyttsx3
+import threading
+import time
 
-def speek(text):
-    url = env.ChatTTS_HOST
-    payload = {"text": text}
+# Configure logging
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
-    try:
-        print(f"Sending text to server: {text}")
-        response = requests.post(url, json=payload)
+# Initialize TTS engine globally
+logging.info("Initializing TTS")
+tts = pyttsx3.init("mb-us2")
+tts.setProperty('rate', tts.getProperty('rate') - 20)
 
-        if response.status_code == 200:
-            with open("output_audio.wav", "wb") as audio_file:
-                audio_file.write(response.content)
-            print("Audio file saved successfully: output_audio.wav")
+def speech(text):
+    logging.info(f"Converting message to speech: {message}")
+    print('\nTTS:\n', message.strip())
 
-            play_audio("output_audio.wav")
-        else:
-            print(f"Error: {response.status_code}, {response.text}")
+    # Define the speech function that uses the initialized TTS engine
+    def play_speech():
+        try:
+            logging.info("Converting message to speech")
+            
+            # Adjust the speech rate (optional)
+            rate = tts.getProperty('rate')
+            
+            # Add a short delay before converting message to speech
+            time.sleep(0.5)  # Adjust the delay as needed
+            
+            tts.say(text)
+            tts.runAndWait()  # Wait for speech playback to complete
+            logging.info("Speech playback completed")
+        except Exception as e:
+            logging.error(f"An error occurred during speech playback: {str(e)}")
 
-    except Exception as e:
-        print(f"An error occurred: {e}")
-
-def play_audio(file_path):
-    try:
-        wave_obj = sa.WaveObject.from_wave_file(file_path)
-        play_obj = wave_obj.play()
-        play_obj.wait_done()  # Wait until sound finishes playing
-    except Exception as e:
-        print(f"An error occurred while playing the audio: {e}")
-
-if __name__ == "__main__":
-    text = "Hello, this is a test message."
-    speek(text)
+    # Start the speech in a separate thread
+    speech_thread = threading.Thread(target=play_speech)
+    speech_thread.start()
