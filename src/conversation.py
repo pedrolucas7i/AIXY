@@ -27,7 +27,7 @@ def commonConversations():
         
         # If a valid response is received, convert it to speech
         if response:
-            tts.speek(response)
+            tts.speak(response)
         else:
             print("Error: No valid response received from the language model.")
     else:
