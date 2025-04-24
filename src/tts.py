@@ -41,9 +41,12 @@ def speak(text):
             logging.error(f"An error occurred during speech playback: {str(e)}")
 
     def threaded_play():
-        asyncio.run(generate_and_play())
+        # Manually create an event loop for the thread
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        loop.run_until_complete(generate_and_play())
+        loop.close()
 
     # Run the speech generation and playback in a separate thread
     speech_thread = threading.Thread(target=threaded_play)
     speech_thread.start()
-
