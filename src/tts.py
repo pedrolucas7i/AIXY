@@ -2,8 +2,7 @@ import logging
 import threading
 import asyncio
 import edge_tts
-from playsound import playsound
-import time
+import os
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -21,10 +20,8 @@ def speak(text):
             logging.info("Generating speech with edge-tts")
             communicate = edge_tts.Communicate(text, voice=VOICE_ID, rate=RATE)
             await communicate.save("output.mp3")
-            logging.info("Audio saved, waiting briefly before playback")
-            await asyncio.sleep(0.5)  # Ensure file is ready
-            playsound("output.mp3")
-            logging.info("Playback complete")
+            logging.info("Audio saved, now playing")
+            os.system("cvlc output.mp3")
         except Exception as e:
             logging.error(f"An error occurred during speech playback: {str(e)}")
 
