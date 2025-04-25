@@ -20,7 +20,6 @@ OLLAMA_USER_ADDITIONAL_PROMPT = os.getenv('OLLAMA_USER_ADDITIONAL_PROMPT')
 DB_FILE = os.getenv('DB_FILE')
 OLLAMA_HOST = os.getenv('OLLAMA_HOST')
 WHISPER_HOST = os.getenv('WHISPER_HOST')
-ChatTTS_HOST = os.getenv('ChatTTS_HOST')
 
 PERSONALITY = (lambda f: f.read())(open("personality.info", "r", encoding="utf-8"))
 PURPOSE = (lambda f: f.read())(open("purpose.info", "r", encoding="utf-8"))

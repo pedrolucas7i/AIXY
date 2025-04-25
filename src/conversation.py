@@ -4,6 +4,8 @@ import tts
 import env
 
 def commonConversations():
+
+    response = None
     # Getting the transcribed speech-to-text data
     stt_data = ' '.join(list(sttClient.multi_segment_generator("end")))  # Joining words to form a sentence
 
@@ -17,8 +19,9 @@ def commonConversations():
             f"Model settings:\n"
             f"- Purpose: {env.PURPOSE}\n"
             f"- Personality: {env.PERSONALITY}\n"
-            f"- Language model: {env.OLLAMA_LANGUAGE_MODEL}\n\n"
-            f"The user said: {stt_data.strip()}\n\n"
+            f"- Language model: {env.OLLAMA_LANGUAGE_MODEL}\n"
+            f"- The last thing you said: {response}\n"
+            f"The user said: {stt_data.strip()}\n\n\n"
             f"Based on this, provide a concise and relevant response without adding unnecessary details."
         )
         
