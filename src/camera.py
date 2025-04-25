@@ -1,32 +1,39 @@
 # camera.py
+import threading
 import cv2
 import numpy as np
-import io
-import threading
 import time
 from picamera2 import Picamera2
 
 class Camera:
-    def __init__(self):
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(Camera, cls).__new__(cls)
+            cls._instance._init_camera()
+        return cls._instance
+
+    def _init_camera(self):
         self.picam2 = Picamera2()
         self.picam2.configure(self.picam2.create_still_configuration(main={'size': (512, 384)}))
         self.picam2.start()
-        
+
         self.frame = None
         self.lock = threading.Lock()
+        self.running = True
 
-        # Start a background thread to continuously capture images
         thread = threading.Thread(target=self.update_frame, daemon=True)
         thread.start()
 
     def update_frame(self):
-        while True:
-            image = self.picam2.capture_array()
-            rotated = np.rot90(image, 2)
-            _, buffer = cv2.imencode(".jpg", rotated)
+        while self.running:
+            frame = self.picam2.capture_array()
+            rotated = np.rot90(frame, 2)
+            _, jpeg = cv2.imencode('.jpg', rotated)
             with self.lock:
-                self.frame = buffer.tobytes()
-            time.sleep(0.1)  # Adjust FPS as needed
+                self.frame = jpeg.tobytes()
+            time.sleep(0.1)
 
     def get_frame(self):
         with self.lock:
