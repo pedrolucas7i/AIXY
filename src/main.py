@@ -67,7 +67,7 @@ def joystick_listener():
 
 def start_threads():
     # Start AI driving thread
-    LVMAD_processor = threading.Thread(target=autonomous_drive, args=(None, None), daemon=True)
+    LVMAD_processor = threading.Thread(target=drive, args=(None, None), daemon=True)
     LVMAD_processor.start()
     
 
