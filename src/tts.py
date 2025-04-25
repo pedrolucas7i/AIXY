@@ -3,23 +3,23 @@ import os
 import uuid
 import threading
 import subprocess
-from queue import Queue
+from queue import Queue, Empty
 from edge_tts import Communicate
 
 VOICE = "en-US-JennyNeural"
-
-# Global queue for speech
 tts_queue = Queue()
 stop_flag = threading.Event()
 
 def start_tts_worker():
     def tts_loop():
         while not stop_flag.is_set():
-            text = tts_queue.get()
-            if text is None:
-                break
             try:
+                text = tts_queue.get(timeout=1)
+                if text is None:
+                    break
                 process_tts(text)
+            except Empty:
+                continue
             except Exception as e:
                 print(f"[TTS Worker] Error: {e}")
             finally:
@@ -37,8 +37,12 @@ def speak(text: str):
     tts_queue.put(text)
 
 def process_tts(text: str):
+    if stop_flag.is_set():
+        print("[TTS] Skipping due to shutdown.")
+        return
+
     filename = f"output_{uuid.uuid4().hex}.mp3"
-    print(f"[TTS] Generating speech for: {text}")
+    print(f"[TTS] Generating: {text}")
 
     try:
         loop = asyncio.new_event_loop()
@@ -46,17 +50,15 @@ def process_tts(text: str):
         loop.run_until_complete(generate_tts(text, filename))
         loop.close()
     except Exception as e:
-        print(f"[TTS] Generation error: {e}")
+        print(f"[TTS] Error generating: {e}")
         return
 
     try:
         print(f"[TTS] Playing with ffplay: {filename}")
         subprocess.run(
-            ["ffplay", "-nodisp", "-autoexit", filename],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL
+            ["ffplay", "-nodisp", "-autoexit", "-loglevel", "quiet", filename]
         )
-        print("[TTS] Playback finished.")
+        print("[TTS] Done.")
     finally:
         if os.path.exists(filename):
             os.remove(filename)
@@ -66,5 +68,6 @@ async def generate_tts(text: str, filename: str):
     await communicator.save(filename)
 
 def stop_tts_worker():
+    print("[TTS] Stopping...")
     stop_flag.set()
     tts_queue.put(None)
