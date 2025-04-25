@@ -4,6 +4,10 @@ import camera
 #Initialize the Flask app
 app = Flask(__name__, template_folder="./webserver")
 
+@app.route('/')
+def index():
+    return render_template('index.html')
+
 @app.route('/stream')
 def stream():
     return Response(camera.getWebStream(), mimetype='multipart/x-mixed-replace; boundary=frame')
