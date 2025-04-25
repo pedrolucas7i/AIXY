@@ -1,24 +1,42 @@
+# camera.py
 import cv2
 import numpy as np
 import io
-from PIL import Image
+import threading
 import time
 from picamera2 import Picamera2
 
-def captured_images():
-    with Picamera2() as picam2:
-        picam2.configure(picam2.create_still_configuration(main={'size': (512, 384)}))
-        picam2.start()
-        frame = picam2.capture_array()
-        rotated = np.rot90(frame, 2)
-        return convertToBytes(rotated)
+class Camera:
+    def __init__(self):
+        self.picam2 = Picamera2()
+        self.picam2.configure(self.picam2.create_still_configuration(main={'size': (512, 384)}))
+        self.picam2.start()
         
-def convertToBytes(image_array):
-    """Convert NumPy image array to bytes."""
-    _, buffer = cv2.imencode(".jpg", image_array)
-    return io.BytesIO(buffer).read()
+        self.frame = None
+        self.lock = threading.Lock()
 
-def getWebStream():
-    while True:
-        yield (b'--frame\r\n'   
-                b'Content-Type: image/jpeg\r\n\r\n' + captured_images() + b'\r\n')
+        # Start a background thread to continuously capture images
+        thread = threading.Thread(target=self.update_frame, daemon=True)
+        thread.start()
+
+    def update_frame(self):
+        while True:
+            image = self.picam2.capture_array()
+            rotated = np.rot90(image, 2)
+            _, buffer = cv2.imencode(".jpg", rotated)
+            with self.lock:
+                self.frame = buffer.tobytes()
+            time.sleep(0.1)  # Adjust FPS as needed
+
+    def get_frame(self):
+        with self.lock:
+            return self.frame
+
+    def get_web_stream(self):
+        while True:
+            frame = self.get_frame()
+            if frame:
+                yield (b'--frame\r\n'
+                       b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+            else:
+                time.sleep(0.1)

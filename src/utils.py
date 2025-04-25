@@ -29,7 +29,24 @@ movements = {
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
-def init_db():
+
+def init_conversations_db():
+    """
+    CONVERSATION MEMORY TABLE (SQLITE DATABASE)
+    """
+    conn = sqlite3.connect(env.DB_FILE)
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS conversations (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        response TEXT,
+                        time DATETIME DEFAULT CURRENT_TIMESTAMP
+                    )''')
+    conn.commit()
+    conn.close()
+
+
+
+def init_definitions_db():
     """
     MEMORY FILE (SQLITE DATABASE)
     ------------------------------------------------
@@ -49,11 +66,11 @@ def init_db():
     conn.close()
 
 
-def accessMemory(thing, category):
+def accessDefinitionMemory(thing, category):
     if category == 'info' or category == 'visual':
         conn = sqlite3.connect(env.DB_FILE)
         cursor = conn.cursor()
-        cursor.execute("SELECT definition FROM crypto_prices WHERE (category = ?) AND (thing = ?)", (category, thing))
+        cursor.execute("SELECT definition FROM definitions WHERE (category = ?) AND (thing = ?)", (category, thing))
         data = cursor.fetchall()
         conn.close()
         
@@ -68,6 +85,9 @@ def accessMemory(thing, category):
     else:
         logging.warning("Invalid Category!")
         return None
+
+def accessConversationMemory(number_to_return=2):
+    pass
 
 
 def addMemory(thing, definition, category):
