@@ -64,12 +64,7 @@ def joystick_listener():
             tts.speak(f"{mode} mode activated.")
             time.sleep(1.5)  # Prevent multiple toggles from one press
 
-# Main execution
-if __name__ == "__main__":
-    print(f"AIXY (V{env.AIXY_SOFTWARE_VERSION}) ALIVE!!!")
-    tts.start_tts_worker()
-    tts.speak(env.FIRST_EN_MESSAGE)
-
+def start_threads():
     # Start AI driving thread
     ai_thread = threading.Thread(target=drive, args=(None, None), daemon=True)
     ai_thread.start()
@@ -85,3 +80,15 @@ if __name__ == "__main__":
     # Start Xbox controller listener
     joystick_thread = threading.Thread(target=joystick_listener, daemon=True)
     joystick_thread.start()
+
+def main():
+    print(f"AIXY (V{env.AIXY_SOFTWARE_VERSION}) ALIVE!!!")
+    
+    # Speak the first message
+    tts.speak(env.FIRST_EN_MESSAGE)
+    
+    # Start other threads
+    start_threads()
+
+if __name__ == "__main__":
+    main()

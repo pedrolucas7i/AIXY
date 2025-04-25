@@ -2,8 +2,9 @@ import sttClient
 import llm
 import tts
 import env
+import asyncio
 
-def commonConversations():
+async def commonConversations():
     # Getting the transcribed speech-to-text data
     stt_data = ' '.join(list(sttClient.multi_segment_generator("end")))  # Joining words to form a sentence
 
@@ -27,8 +28,7 @@ def commonConversations():
         
         # If a valid response is received, convert it to speech
         if response:
-            if tts_queue.empty():
-                tts.speak(response)
+            tts.speak(response)
         else:
             print("Error: No valid response received from the language model.")
     else:

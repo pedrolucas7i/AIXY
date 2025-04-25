@@ -1,73 +1,57 @@
-import asyncio
-import os
-import uuid
+import logging
 import threading
+import time
+import asyncio
 import subprocess
-from queue import Queue, Empty
+import os
 from edge_tts import Communicate
 
+# Configure logging
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# TTS voice settings (adjust as needed)
 VOICE = "en-US-JennyNeural"
-tts_queue = Queue()
-stop_flag = threading.Event()
 
-def start_tts_worker():
-    def tts_loop():
-        while not stop_flag.is_set():
-            try:
-                text = tts_queue.get(timeout=1)
-                if text is None:
-                    break
-                process_tts(text)
-            except Empty:
-                continue
-            except Exception as e:
-                print(f"[TTS Worker] Error: {e}")
-            finally:
-                tts_queue.task_done()
+# Function to convert text to speech using edge_tts
+def text_to_speech(message):
+    logging.info(f"Converting message to speech: {message}")
+    print('\nTTS:\n', message.strip())  # Print the message for debugging
 
-    thread = threading.Thread(target=tts_loop, daemon=True)
-    thread.start()
-    return thread
+    # Define the function that generates speech asynchronously and plays it in a thread
+    def play_speech():
+        try:
+            logging.info("Starting speech conversion...")
 
-def speak(text: str):
-    if not text.strip():
-        print("[TTS] Empty text, skipping...")
-        return
-    print(f"[TTS] Queued: {text}")
-    tts_queue.put(text)
+            # Define the async function that uses edge_tts for speech generation
+            async def generate_speech():
+                communicator = Communicate(text=message, voice=VOICE)
+                # Output file path can be changed as needed
+                filename = "output.mp3"
+                await communicator.save(filename)
+                logging.info(f"Speech generated and saved to {filename}")
+                
+                # Play the generated file (using 'cvlc' or another player)
+                subprocess.run(['cvlc', '--play-and-exit', filename], check=True)
+                logging.info("Speech playback completed.")
+                
+                # Cleanup the file after playback
+                if os.path.exists(filename):
+                    os.remove(filename)
 
-def process_tts(text: str):
-    if stop_flag.is_set():
-        print("[TTS] Skipping due to shutdown.")
-        return
+            # Run the async function inside the thread
+            asyncio.run(generate_speech())
 
-    filename = f"output_{uuid.uuid4().hex}.mp3"
-    print(f"[TTS] Generating: {text}")
+        except Exception as e:
+            logging.error(f"An error occurred during speech conversion: {str(e)}")
 
-    try:
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        loop.run_until_complete(generate_tts(text, filename))
-        loop.close()
-    except Exception as e:
-        print(f"[TTS] Error generating: {e}")
-        return
+    # Create and start a thread to execute the TTS in the background
+    speech_thread = threading.Thread(target=play_speech)
+    speech_thread.start()
 
-    try:
-        print(f"[TTS] Playing with ffplay: {filename}")
-        subprocess.run(
-            ["ffplay", "-nodisp", "-autoexit", "-loglevel", "quiet", filename]
-        )
-        print("[TTS] Done.")
-    finally:
-        if os.path.exists(filename):
-            os.remove(filename)
-
-async def generate_tts(text: str, filename: str):
-    communicator = Communicate(text=text, voice=VOICE)
-    await communicator.save(filename)
-
-def stop_tts_worker():
-    print("[TTS] Stopping...")
-    stop_flag.set()
-    tts_queue.put(None)
+# Example usage:
+if __name__ == "__main__":
+    # Test the TTS function
+    text_to_speech("Hello, I am AIXY, your autonomous robot!")
+    
+    # Wait to ensure speech has time to be played
+    time.sleep(5)  # Adjust the sleep time as needed to ensure speech plays fully
