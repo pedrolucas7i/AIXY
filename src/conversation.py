@@ -2,9 +2,8 @@ import sttClient
 import llm
 import tts
 import env
-import asyncio
 
-async def commonConversations():
+def commonConversations():
     # Getting the transcribed speech-to-text data
     stt_data = ' '.join(list(sttClient.multi_segment_generator("end")))  # Joining words to form a sentence
 
