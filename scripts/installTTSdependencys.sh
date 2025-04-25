@@ -6,7 +6,6 @@ echo """
 ===========================================================
 """
 
-sudo apt-get update
-sudo apt-get install vlc
+sudo apt install ffmpeg
 
 echo "Instalation completed with success!"
