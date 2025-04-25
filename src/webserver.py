@@ -1,9 +1,10 @@
 from flask import Flask, render_template, Response
-import camera
+from camera import Camera
 import time
 
 #Initialize the Flask app
 app = Flask(__name__, template_folder="./webserver")
+camera = Camera()
 
 @app.route('/')
 def index():
@@ -11,7 +12,7 @@ def index():
 
 @app.route('/stream')
 def stream():
-    return Response(camera.getWebStream(), mimetype='multipart/x-mixed-replace; boundary=frame')
+    return Response(camera.get_web_stream()), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 def run():
     app.run(debug=False, port=9900, host="0.0.0.0")
