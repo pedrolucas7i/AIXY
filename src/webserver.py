@@ -12,7 +12,7 @@ def index():
 
 @app.route('/stream')
 def stream():
-    return Response(camera.get_web_stream()), mimetype='multipart/x-mixed-replace; boundary=frame')
+    return Response(camera.get_web_stream(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 def run():
     app.run(debug=False, port=9900, host="0.0.0.0")
