@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %
 VOICE = "en-US-JennyNeural"
 
 # Function to convert text to speech using edge_tts
-def text_to_speech(message):
+def speak(message):
     logging.info(f"Converting message to speech: {message}")
     print('\nTTS:\n', message.strip())  # Print the message for debugging
 
