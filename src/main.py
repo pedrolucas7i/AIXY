@@ -7,6 +7,7 @@ import vision
 import utils
 import conversation
 import brain
+import webserver
 import tts
 import env
 
@@ -66,20 +67,25 @@ def joystick_listener():
 
 def start_threads():
     # Start AI driving thread
-    ai_thread = threading.Thread(target=drive, args=(None, None), daemon=True)
-    ai_thread.start()
+    LVMAD_processor = threading.Thread(target=autonomous_drive, args=(None, None), daemon=True)
+    LVMAD_processor.start()
+    
 
     # Start human interaction thread
-    convo_thread = threading.Thread(target=human_interaction)
-    convo_thread.start()
+    LLMAC_processor = threading.Thread(target=human_interaction, daemon=True)
+    LLMAC_processor.start()
 
     # Start obstacle detection thread
-    obstacle_thread = threading.Thread(target=utils.verifyObstacules)
-    obstacle_thread.start()
+    OA_processor = threading.Thread(target=utils.verifyObstacules, daemon=True)
+    OA_processor.start()
 
-    # Start Xbox controller listener
-    joystick_thread = threading.Thread(target=joystick_listener, daemon=True)
-    joystick_thread.start()
+    # Start Xbox controller switcher mode listener
+    SBM_processor = threading.Thread(target=joystick_listener, daemon=True)
+    SBM_processor.start()
+
+    # Start Web Camera Stream to can be seen the image of camera in others devices
+    WCS_processor = threading.Thread(target=webserver.run, daemon=True)
+    WCS_processor.start()
 
 def main():
     print(f"AIXY (V{env.AIXY_SOFTWARE_VERSION}) ALIVE!!!")

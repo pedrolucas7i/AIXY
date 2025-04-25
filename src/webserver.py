@@ -8,4 +8,5 @@ app = Flask(__name__, template_folder="./webserver")
 def stream():
     return Response(camera.getWebStream(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-app.run(debug=False, port=9900)
+def run():
+    app.run(debug=False, port=9900)
