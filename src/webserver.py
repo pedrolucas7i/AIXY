@@ -11,9 +11,7 @@ def index():
 
 @app.route('/stream')
 def stream():
-    while True:
-        yield Response(camera.getWebStream(), mimetype='multipart/x-mixed-replace; boundary=frame')
-        time.sleep(0.1)
+    return Response(camera.getWebStream(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 def run():
     app.run(debug=False, port=9900, host="0.0.0.0")
