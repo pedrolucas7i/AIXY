@@ -9,4 +9,4 @@ def stream():
     return Response(camera.getWebStream(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 def run():
-    app.run(debug=False, port=9900)
+    app.run(debug=False, port=9900, host="0.0.0.0")
