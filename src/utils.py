@@ -126,6 +126,10 @@ def verifyObstacules():
         sleep(0.2)
     
     Motors.stop()
+
+def getDistance():
+    ultrassonic = tank.Ultrasonic()
+    return ultrassonic.get_distance()
     
 
 def findObjectVisionPrompt(thing, localization=None, MemoryFile=True, additionalPrompt=None):

@@ -23,3 +23,23 @@ WHISPER_HOST = os.getenv('WHISPER_HOST')
 
 PERSONALITY = (lambda f: f.read())(open("personality.info", "r", encoding="utf-8"))
 PURPOSE = (lambda f: f.read())(open("purpose.info", "r", encoding="utf-8"))
+
+COMMANDS = [
+    'ultrassonic',
+    'drive forward',
+    'turn left',
+    'turn right',
+    'drive backward',
+    'catch the object',
+    'stop',
+]
+
+RESPONSES = [
+    'centimeters to the obstacle',
+    'Driving forward',
+    'turning left',
+    'turning right',
+    'driving backward',
+    'catching the object',
+    'stoped for 40 seconds',
+]

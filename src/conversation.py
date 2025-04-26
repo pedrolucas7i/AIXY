@@ -2,6 +2,7 @@ import sttClient
 import llm
 import tts
 import env
+import commands
 
 def commonConversations():
 
@@ -9,7 +10,7 @@ def commonConversations():
     # Getting the transcribed speech-to-text data
     stt_data = ' '.join(list(sttClient.multi_segment_generator("end")))  # Joining words to form a sentence
 
-    if stt_data:  # Check if the transcribed text is not empty
+    if (stt_data is not None) and (stt_data not in env.COMMANDS):  # Check if the transcribed text is not empty and is not a command
         # Build the prompt for the language model, incorporating the environment variables
         prompt = (
             f"You are an AI assistant interacting with the user in a focused and efficient manner.\n"
@@ -24,7 +25,7 @@ def commonConversations():
             f"The user said: {stt_data.strip()}\n\n\n"
             f"Based on this, provide a concise and relevant response without adding unnecessary details."
         )
-        
+
         # Calling the language model to get the response using the constructed prompt
         response = llm.get(env.OLLAMA_LANGUAGE_MODEL, prompt)
         
@@ -33,5 +34,9 @@ def commonConversations():
             tts.speak(response)
         else:
             print("Error: No valid response received from the language model.")
+
+    elif (stt_data in env.COMMANDS):
+       commands.executeCommand(stt_data)
+
     else:
         print("Error: No speech-to-text data received.")
