@@ -16,7 +16,7 @@ class Camera:
 
     def _init_camera(self):
         self.picam2 = Picamera2()
-        self.picam2.configure(self.picam2.create_still_configuration(main={'size': (512, 384)}))
+        self.picam2.configure(self.picam2.create_still_configuration(main={'size': (224, 224)}))
         self.picam2.start()
 
         self.frame = None
@@ -32,7 +32,7 @@ class Camera:
             rotated = np.rot90(frame, 2)
             _, jpeg = cv2.imencode('.jpg', rotated)
             with self.lock:
-                self.frame = jpeg.tobytes()
+                self.frame = 255 - jpeg.tobytes()
             time.sleep(0.1)
 
     def get_frame(self):
