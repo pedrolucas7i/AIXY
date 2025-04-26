@@ -30,8 +30,7 @@ class Camera:
         while self.running:
             frame = self.picam2.capture_array()
             rotated = np.rot90(frame, 2)
-            inverted = 255 - rotated
-            _, jpeg = cv2.imencode('.jpg', inverted)
+            _, jpeg = cv2.imencode('.jpg', rotated)
             with self.lock:
                 self.frame = jpeg.tobytes()
             time.sleep(0.1)
