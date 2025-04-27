@@ -46,8 +46,6 @@ def commonConversations():
 
 
 
-import re
-
 def clean_text(text):
     # Remove punctuation
     text = re.sub(r'[.,!?]', '', text)

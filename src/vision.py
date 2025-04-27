@@ -1,13 +1,9 @@
 from ollama import Client
 from time import sleep
-import logging
 from camera import Camera
 import utils
 import llm
 import env
-
-# Configure logging
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 camera = Camera()
         
