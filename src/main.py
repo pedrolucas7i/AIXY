@@ -83,8 +83,9 @@ def start_processes():
     SBM_processor.start()
 
     # Start Web Camera Stream to can be seen the image of camera in others devices
-    WCS_processor = multiprocessing.Process(target=webserver.run, daemon=True)
+    WCS_processor = threading.Thread(target=webserver.run, daemon=True)
     WCS_processor.start()
+
 
 def main():
     print(f"AIXY (V{env.AIXY_SOFTWARE_VERSION}) ALIVE!!!")

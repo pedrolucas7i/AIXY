@@ -45,5 +45,4 @@ class Camera:
             if frame:
                 yield (b'--frame\r\n'
                        b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
-            else:
-                time.sleep(0.1)
+            time.sleep(0.1)
