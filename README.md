@@ -50,12 +50,16 @@
 .
 ├── images
 │   └── aixy.jpeg
+├── LICENSE
 ├── LICENSE-OLLAMA
 ├── LICENSE-OPENAI-WHISPER
 ├── README.md
+├── scripts
+│   └── installTTSdependencys.sh
 ├── src
 │   ├── brain.py
 │   ├── camera.py
+│   ├── commands.py
 │   ├── controller.py
 │   ├── conversation.py
 │   ├── env.py
@@ -72,8 +76,12 @@
 │   ├── tts.py
 │   ├── utils.py
 │   ├── vision.py
+│   ├── webserver
+│   │   └── index.html
+│   ├── webserver.py
 │   └── xbox360_controller.py
 └── thank.you
+
 ```
 
 ---
