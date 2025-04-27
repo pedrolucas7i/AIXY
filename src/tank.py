@@ -1,5 +1,6 @@
 # Import the Motor class from the gpiozero library
 from gpiozero import Motor as Motors, DistanceSensor, PWMSoftwareFallback, Servo
+from threading import Lock
 from time import sleep
 import warnings
 import env
@@ -11,6 +12,7 @@ class Motor:
         """Initialize the tankMotor class with GPIO pins for the left and right motors."""
         self.left_motor = Motors(23, 24)  # Initialize the left motor with GPIO pins 23 and 24
         self.right_motor = Motors(6, 5)   # Initialize the right motor with GPIO pins 6 and 5
+        self.lock = Lock()
 
     def duty_range(self, duty1, duty2):
         """Ensure the duty cycle values are within the valid range (-4095 to 4095)."""
@@ -46,9 +48,11 @@ class Motor:
 
     def setMotorModel(self, duty1, duty2):
         """Set the duty cycle for both motors and ensure they are within the valid range."""
-        duty1, duty2 = self.duty_range(duty1, duty2)  # Clamp the duty cycle values
-        self.left_Wheel(-duty1)   # Control the left wheel
-        self.right_Wheel(-duty2)  # Control the right wheel
+        with self.lock:
+            duty1, duty2 = self.duty_range(duty1, duty2)
+            self.left_Wheel(-duty1)
+            self.right_Wheel(-duty2)
+
         
     def driveBackward(self, speedLevel=1):
         """Drive Backward with diferent speed levels"""
@@ -111,7 +115,8 @@ class Motor:
         self.setMotorModel(pwm_value - int(env.LEFT_MOTOR_CORRECTION_PWM_VALUE), pwm_value - int(env.RIGHT_MOTOR_CORRECTION_PWM_VALUE))
     
     def stop(self):
-        self.setMotorModel(0, 0) 
+        with self.lock:
+            self.setMotorModel(0, 0) 
     
     def close(self):
         """Close the motors to release resources."""
