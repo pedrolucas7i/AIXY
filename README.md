@@ -23,9 +23,9 @@
 - **Programming Languages**: Python
 - **Robot Hardware Platform**: Raspberry Pi 5
 - **AI Server Hardware Platform**: DELL GTX1080 8GB and Gigabyte Gaming OC RTX3060 12GB in one Intel Xeon E5-2680V4 with 32GB DDR4 ECC of RAM
-- **LLM (Large Language Model)**: [llama3.2:3b](https://ollama.com/library/llama3.2)
-- **LVM (Large Vision Model)**: [llava:7b](https://ollama.com/library/llava)
-- **TTS (Text to Speech)**: [ChatTTS](https://github.com/2noise/ChatTTS)
+- **LLM (Large Language Model)**: [gemma2:2b](https://ollama.com/library/gemma2:2b)
+- **LVM (Large Vision Model)**: [llava:7b](https://ollama.com/library/llava:7b)
+- **TTS (Text to Speech)**: [gTTS](https://pypi.org/project/gTTS/)
 - **STT (Speech to Text)**: [OpenAI Whisper](https://github.com/openai/whisper)
 - **Sensors**: Ultrasonic sensor for front distance detection, camera for computer vision
 
