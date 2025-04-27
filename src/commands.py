@@ -15,7 +15,7 @@ def executeCommand(stt_data):
         (env.COMMANDS[3], lambda: (tts.speak(env.RESPONSES[3]), Motors.driveRight(3))),
         (env.COMMANDS[4], lambda: (tts.speak(env.RESPONSES[4]), Motors.driveBackward(3))),
         (env.COMMANDS[5], lambda: (tts.speak(env.RESPONSES[5]), clamp.up())),
-        (env.COMMANDS[6], lambda: (tts.speak(env.RESPONSES[6]), Motors.stop(), time.sleep(40))),
+        (env.COMMANDS[6], lambda: (tts.speak(env.RESPONSES[6]), Motors.stop(), time.sleep(40), tts.speak("I'm back"))),
     ]
 
     for command, action in commands_actions:
