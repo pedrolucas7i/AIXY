@@ -44,4 +44,4 @@ def commonConversations():
 
 
 def clean_text(text):
-    return text.replace(".", "").strip()
+    return text.replace(".", "").strip().lower()
