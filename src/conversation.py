@@ -10,7 +10,11 @@ def commonConversations():
     # Getting the transcribed speech-to-text data
     stt_data = ' '.join(list(sttClient.multi_segment_generator("end")))  # Joining words to form a sentence
 
-    if (stt_data is not None) and (clean_text(stt_data) not in env.COMMANDS):  # Check if the transcribed text is not empty and is not a command
+    print(clean_text(stt_data))
+    if (env.COMMANDS in clean_text(stt_data)):
+        commands.executeCommand(clean_text(stt_data))
+
+    elif (stt_data is not None) and (clean_text(stt_data) not in env.COMMANDS):  # Check if the transcribed text is not empty and is not a command
         # Build the prompt for the language model, incorporating the environment variables
         prompt = (
             f"You are an AI assistant interacting with the user in a focused and efficient manner.\n"
@@ -34,9 +38,6 @@ def commonConversations():
             tts.speak(response)
         else:
             print("Error: No valid response received from the language model.")
-
-    elif (clean_text(stt_data) in env.COMMANDS):
-       commands.executeCommand(clean_text(stt_data))
 
     else:
         print("Error: No speech-to-text data received.")
