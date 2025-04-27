@@ -47,13 +47,21 @@ def commonConversations():
 
 
 def clean_text(text):
-    # Remove punctuation (.,!?)
+    # Remove punctuation
     text = re.sub(r'[.,!?]', '', text)
-    # Strip spaces at beginning and end
+    # Lowercase and strip leading/trailing spaces
     text = text.strip().lower()
 
-    # If there are more spaces than half of the non-space characters,
-    # it means the text was separated letter by letter
-    if text.count(' ') > len(text.replace(' ', '')) / 2:
-        text = text.replace(' ', '')  # Remove ALL spaces inside
+    # Detect if text is letter-by-letter spaced (e.g., 'h e l l o')
+    letters_only = text.replace(' ', '')
+    space_count = text.count(' ')
+
+    if space_count > len(letters_only) / 2:
+        # Probably letter-by-letter: remove all spaces
+        text = letters_only
+    else:
+        # Otherwise: normalize spaces (replace multiple spaces with a single one)
+        text = re.sub(r'\s+', ' ', text)
+        
     return text
+
