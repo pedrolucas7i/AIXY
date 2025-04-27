@@ -47,21 +47,9 @@ def commonConversations():
 
 
 def clean_text(text):
-    # Remove punctuation
+    # Remove punctuation (.,!?)
     text = re.sub(r'[.,!?]', '', text)
-    # Lowercase and strip leading/trailing spaces
+    # Strip spaces at beginning and end
     text = text.strip().lower()
-
-    # Detect if text is letter-by-letter spaced (e.g., 'h e l l o')
-    letters_only = text.replace(' ', '')
-    space_count = text.count(' ')
-
-    if space_count > len(letters_only) / 2:
-        # Probably letter-by-letter: remove all spaces
-        text = letters_only
-    else:
-        # Otherwise: normalize spaces (replace multiple spaces with a single one)
-        text = re.sub(r'\s+', ' ', text)
-        
+    
     return text
-
