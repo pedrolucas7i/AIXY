@@ -3,6 +3,8 @@ import llm
 import tts
 import env
 import commands
+import re
+
 
 def commonConversations():
 
@@ -45,4 +47,13 @@ def commonConversations():
 
 
 def clean_text(text):
-    return text.replace(".", "").lower()
+    # Remove punctuation (.,!?)
+    text = re.sub(r'[.,!?]', '', text)
+    # Strip spaces at beginning and end
+    text = text.strip().lower()
+
+    # If there are more spaces than half of the non-space characters,
+    # it means the text was separated letter by letter
+    if text.count(' ') > len(text.replace(' ', '')) / 2:
+        text = text.replace(' ', '')  # Remove ALL spaces inside
+    return text
