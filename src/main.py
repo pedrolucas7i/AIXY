@@ -1,4 +1,3 @@
-import multiprocessing
 import threading
 import logging
 import time
@@ -40,7 +39,6 @@ def human_interaction():
     while True:
         conversation.commonConversations()
 
-# Function to listen for Xbox controller input
 def joystick_listener():
     global manual_mode
     pygame.init()
@@ -56,7 +54,6 @@ def joystick_listener():
 
     while True:
         pygame.event.pump()
-        # Xbox button is usually button index 8
         xbox_button = joystick.get_button(8)
 
         if xbox_button:
@@ -65,28 +62,30 @@ def joystick_listener():
             print(f"Switched to {mode} mode.")
             tts.speak(f"{mode} mode activated.")
             time.sleep(1.5)  # Prevent multiple toggles from one press
+        else:
+            time.sleep(0.05)  # When nothing happens wait (50ms)
 
-def start_processes():
-    # Start AI driving process
-    LVMAD_processor = multiprocessing.Process(target=drive, args=(None, None), daemon=True)
+def start_threads():
+    # Start AI driving thread
+    LVMAD_processor = threading.Thread(target=drive, args=(None, None), daemon=True)
     LVMAD_processor.start()
+    
 
-    # Start human interaction process
-    LLMAC_processor = multiprocessing.Process(target=human_interaction, daemon=True)
+    # Start human interaction thread
+    LLMAC_processor = threading.Thread(target=human_interaction, daemon=True)
     LLMAC_processor.start()
 
-    # Start obstacle detection process
-    OA_processor = multiprocessing.Process(target=utils.verifyObstacules, daemon=True)
+    # Start obstacle detection thread
+    OA_processor = threading.Thread(target=utils.verifyObstacules, daemon=True)
     OA_processor.start()
 
     # Start Xbox controller switcher mode listener
-    SBM_processor = multiprocessing.Process(target=joystick_listener, daemon=True)
+    SBM_processor = threading.Thread(target=joystick_listener, daemon=True)
     SBM_processor.start()
 
     # Start Web Camera Stream to can be seen the image of camera in others devices
     WCS_processor = threading.Thread(target=webserver.run, daemon=True)
     WCS_processor.start()
-
 
 def main():
     print(f"AIXY (V{env.AIXY_SOFTWARE_VERSION}) ALIVE!!!")
@@ -94,8 +93,8 @@ def main():
     # Speak the first message
     tts.speak(env.FIRST_EN_MESSAGE)
     
-    # Start other processes
-    start_processes()
+    # Start other threads
+    start_threads()
 
 if __name__ == "__main__":
     main()
