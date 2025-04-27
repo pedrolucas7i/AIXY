@@ -46,10 +46,21 @@ def commonConversations():
 
 
 
-def clean_text(text):
-    # Remove punctuation (.,!?)
+import re
+
+def smart_clean_text(text):
+    # Remove punctuation
     text = re.sub(r'[.,!?]', '', text)
-    # Strip spaces at beginning and end
+    # Lowercase and strip spaces
     text = text.strip().lower()
-    
+
+    # Replace multiple spaces (2 or more) with a special marker
+    text = re.sub(r'\s{2,}', ' ||| ', text)
+    # Remove *all* single spaces (assume letter-by-letter inside words)
+    text = text.replace(' ', '')
+    # Replace markers back to real single spaces
+    text = text.replace('|||', ' ')
+    # Final clean: collapse any accidental extra spaces
+    text = re.sub(r'\s+', ' ', text).strip()
+
     return text
