@@ -1,7 +1,11 @@
+import logging
 import threading
 import time
 from gtts import gTTS
 import os
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def speak(message):
     logging.info(f"Converting message to speech: {message}")
