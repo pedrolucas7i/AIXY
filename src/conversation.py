@@ -10,6 +10,7 @@ def commonConversations():
     # Getting the transcribed speech-to-text data
     stt_data = ' '.join(list(sttClient.multi_segment_generator("end")))  # Joining words to form a sentence
 
+    print(clean_text(stt_data))
     if (clean_text(stt_data) in env.COMMANDS):
         commands.executeCommand(clean_text(stt_data))
 
