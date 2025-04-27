@@ -25,13 +25,13 @@ PERSONALITY = (lambda f: f.read())(open("personality.info", "r", encoding="utf-8
 PURPOSE = (lambda f: f.read())(open("purpose.info", "r", encoding="utf-8"))
 
 COMMANDS = [
-    'ultrassonic',
+    'get ultrassonic data',
     'drive forward',
     'turn left',
     'turn right',
     'drive backward',
     'catch the object',
-    'stop',
+    'stop now',
 ]
 
 RESPONSES = [
