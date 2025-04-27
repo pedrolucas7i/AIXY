@@ -48,7 +48,7 @@ def commonConversations():
 
 import re
 
-def smart_clean_text(text):
+def clean_text(text):
     # Remove punctuation
     text = re.sub(r'[.,!?]', '', text)
     # Lowercase and strip spaces
