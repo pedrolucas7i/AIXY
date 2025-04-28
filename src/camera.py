@@ -5,11 +5,11 @@ import numpy as np
 import time
 
 class Camera:
-    from picamera2 import Picamera2
-    
+
     _instance = None
 
     def __new__(cls):
+        from picamera2 import Picamera2
         if cls._instance is None:
             cls._instance = super(Camera, cls).__new__(cls)
             cls._instance._init_camera()
