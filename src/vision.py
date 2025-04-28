@@ -1,11 +1,11 @@
 from ollama import Client
 from time import sleep
-from camera import Camera
+from camera import CameraUSB
 import utils
 import llm
 import env
 
-camera = Camera()
+camera = CameraUSB()
         
 def decide(additionalPrompt=None):
     if additionalPrompt:

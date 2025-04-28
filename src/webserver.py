@@ -1,10 +1,10 @@
 from flask import Flask, render_template, Response
-from camera import Camera
+from camera import CameraUSB
 import time
 
 #Initialize the Flask app
 app = Flask(__name__, template_folder="./webserver")
-camera = Camera()
+camera = CameraUSB()
 
 @app.route('/')
 def index():
