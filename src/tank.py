@@ -10,7 +10,7 @@ class Motor:
     
     def __init__(self):
         """Initialize the tankMotor class with GPIO pins for the left and right motors."""
-        self.left_motor = Motors(23, 24)  # Initialize the left motor with GPIO pins 23 and 24
+        self.left_motor = Motors(20, 21)  # Initialize the left motor with GPIO pins 23 and 24
         self.right_motor = Motors(6, 5)   # Initialize the right motor with GPIO pins 6 and 5
         self.lock = Lock()
 
@@ -127,8 +127,8 @@ class Ultrasonic:
     def __init__(self):
         # Initialize the Ultrasonic class and set up the distance sensor.
         warnings.filterwarnings("ignore", category=PWMSoftwareFallback)  # Ignore PWM software fallback warnings
-        self.trigger_pin = 27  # Set the trigger pin number
-        self.echo_pin = 22     # Set the echo pin number
+        self.trigger_pin = 13  # Set the trigger pin number
+        self.echo_pin = 19     # Set the echo pin number
         self.sensor = DistanceSensor(echo=self.echo_pin, trigger=self.trigger_pin, max_distance=3)  # Initialize the distance sensor
 
     def get_distance(self):
@@ -144,8 +144,8 @@ class Clamp:
     def __init__(self):
         self.servo = None
         if self.servo is None:
-            self.servo0 = Servo(12)
-            self.servo1 = Servo(13)
+            self.servo0 = Servo(26)
+            self.servo1 = Servo(16)
         
     def up(self):
         """Perform clamp up operation"""
